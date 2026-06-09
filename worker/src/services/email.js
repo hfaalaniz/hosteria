@@ -1,7 +1,7 @@
-async function getSmtpConfig(DB) {
+async function getSmtpConfig(DB, tenant_id) {
   const { results } = await DB.prepare(
-    "SELECT clave, valor FROM configuracion WHERE clave IN ('smtp_habilitado','smtp_from','nombre_hosteria','hora_checkin','hora_checkout','direccion','telefono','resend_api_key')"
-  ).all();
+    "SELECT clave,valor FROM configuracion_mt WHERE tenant_id=? AND clave IN ('smtp_habilitado','smtp_from','nombre_hosteria','hora_checkin','hora_checkout','direccion','telefono','resend_api_key')"
+  ).bind(tenant_id).all();
   return results.reduce((acc, r) => ({ ...acc, [r.clave]: r.valor }), {});
 }
 
@@ -28,11 +28,11 @@ function baseLayout(contenido, nombre) {
 </div></body></html>`;
 }
 
-async function enviarEmail(DB, { to, subject, html }) {
-  const cfg = await getSmtpConfig(DB);
+async function enviarEmail(DB, tenant_id, { to, subject, html }) {
+  const cfg = await getSmtpConfig(DB, tenant_id);
   if (!cfg.resend_api_key) return;
 
-  const from = cfg.smtp_from || `noreply@hosteria.com`;
+  const from = cfg.smtp_from || 'noreply@resend.dev';
   const nombre = cfg.nombre_hosteria || 'Hostería';
 
   await fetch('https://api.resend.com/emails', {
@@ -45,8 +45,8 @@ async function enviarEmail(DB, { to, subject, html }) {
   });
 }
 
-export async function emailConfirmacionReserva(DB, reserva) {
-  const cfg = await getSmtpConfig(DB);
+export async function emailConfirmacionReserva(DB, reserva, tenant_id) {
+  const cfg = await getSmtpConfig(DB, tenant_id);
   const nombre = cfg.nombre_hosteria || 'Hostería';
   const senia = reserva.senia != null
     ? `<div class="info">💳 <strong>Seña requerida (10%):</strong> $${reserva.senia}<br>
@@ -62,11 +62,11 @@ export async function emailConfirmacionReserva(DB, reserva) {
     <div class="row"><span class="label">Noches</span><span class="value">${reserva.noches}</span></div>
     <div class="row"><span class="label">Total</span><span class="value">$${reserva.precio_total}</span></div>
     ${senia}`;
-  await enviarEmail(DB, { to: reserva.huesped_email, subject: `Reserva ${reserva.codigo} — ${nombre}`, html: baseLayout(contenido, nombre) });
+  await enviarEmail(DB, tenant_id, { to: reserva.huesped_email, subject: `Reserva ${reserva.codigo} — ${nombre}`, html: baseLayout(contenido, nombre) });
 }
 
-export async function emailRecordatorio(DB, reserva) {
-  const cfg = await getSmtpConfig(DB);
+export async function emailRecordatorio(DB, reserva, tenant_id) {
+  const cfg = await getSmtpConfig(DB, tenant_id);
   const nombre = cfg.nombre_hosteria || 'Hostería';
   const contenido = `
     <p>Hola <strong>${reserva.huesped_nombre}</strong>,</p>
@@ -75,11 +75,11 @@ export async function emailRecordatorio(DB, reserva) {
     <div class="row"><span class="label">Llegada</span><span class="value">${reserva.fecha_entrada}</span></div>
     <div class="row"><span class="label">Check-in desde</span><span class="value">${cfg.hora_checkin || '14:00'} hs</span></div>
     <div class="info">📍 ${cfg.direccion || ''} · 📞 ${cfg.telefono || ''}</div>`;
-  await enviarEmail(DB, { to: reserva.huesped_email, subject: `Recordatorio: llegada mañana — ${nombre}`, html: baseLayout(contenido, nombre) });
+  await enviarEmail(DB, tenant_id, { to: reserva.huesped_email, subject: `Recordatorio: llegada mañana — ${nombre}`, html: baseLayout(contenido, nombre) });
 }
 
-export async function emailSeniaCobrada(DB, reserva) {
-  const cfg = await getSmtpConfig(DB);
+export async function emailSeniaCobrada(DB, reserva, tenant_id) {
+  const cfg = await getSmtpConfig(DB, tenant_id);
   const nombre = cfg.nombre_hosteria || 'Hostería';
   const saldo = Math.round((reserva.precio_total - reserva.senia) * 100) / 100;
   const contenido = `
@@ -88,5 +88,5 @@ export async function emailSeniaCobrada(DB, reserva) {
     <div class="row"><span class="label">Seña abonada</span><span class="value">$${reserva.senia}</span></div>
     <div class="row"><span class="label">Saldo al llegar</span><span class="value">$${saldo}</span></div>
     <div class="info">✅ Tu reserva queda garantizada.</div>`;
-  await enviarEmail(DB, { to: reserva.huesped_email, subject: `Seña confirmada — Reserva ${reserva.codigo}`, html: baseLayout(contenido, nombre) });
+  await enviarEmail(DB, tenant_id, { to: reserva.huesped_email, subject: `Seña confirmada — Reserva ${reserva.codigo}`, html: baseLayout(contenido, nombre) });
 }

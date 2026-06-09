@@ -4,6 +4,7 @@ import { authMiddleware } from '../middleware/auth.js';
 export const historial = new Hono();
 
 historial.get('/', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { desde, hasta, tipo, buscar, page = 1 } = c.req.query();
   const limit = 50;
   const offset = (parseInt(page) - 1) * limit;
@@ -14,9 +15,9 @@ historial.get('/', authMiddleware, async c => {
   const queries = [];
   const s = buscar ? `%${buscar}%` : null;
 
-  if (!tipo || tipo === 'reserva') queries.push(c.env.DB.prepare(`SELECT r.id,r.codigo,r.estado,r.origen,r.fecha_entrada,r.fecha_salida,r.noches,r.precio_total,r.adultos,r.ninos,r.creado_en,r.actualizado_en,h.nombre||' '||h.apellido as huesped_nombre,h.email as huesped_email,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE DATE(r.creado_en) BETWEEN ? AND ?${s?' AND (h.nombre||? || h.apellido LIKE ? OR r.codigo LIKE ? OR hab.numero LIKE ?)':''}`).bind(fechaDesde,fechaHasta,...(s?[s,s,s]:[])).all());
-  if (!tipo || tipo === 'factura') queries.push(c.env.DB.prepare(`SELECT f.id,f.numero,f.total,f.metodo_pago,f.estado,f.emitida_en,h.nombre||' '||h.apellido as huesped_nombre,hab.numero as habitacion_numero FROM facturas f JOIN huespedes h ON f.huesped_id=h.id JOIN reservas r ON f.reserva_id=r.id JOIN habitaciones hab ON r.habitacion_id=hab.id WHERE DATE(f.emitida_en) BETWEEN ? AND ?${s?' AND (h.nombre||? || h.apellido LIKE ? OR f.numero LIKE ?)':''}`).bind(fechaDesde,fechaHasta,...(s?[s,s]:[])).all());
-  if (!tipo || tipo === 'mantenimiento') queries.push(c.env.DB.prepare(`SELECT m.id,m.descripcion,m.prioridad,m.estado,m.creado_en,m.resuelto_en,hab.numero as habitacion_numero FROM mantenimiento m JOIN habitaciones hab ON m.habitacion_id=hab.id WHERE DATE(m.creado_en) BETWEEN ? AND ?${s?' AND (m.descripcion LIKE ? OR hab.numero LIKE ?)':''}`).bind(fechaDesde,fechaHasta,...(s?[s,s]:[])).all());
+  if (!tipo || tipo === 'reserva') queries.push(c.env.DB.prepare(`SELECT r.id,r.codigo,r.estado,r.origen,r.fecha_entrada,r.fecha_salida,r.noches,r.precio_total,r.adultos,r.ninos,r.creado_en,r.actualizado_en,h.nombre||' '||h.apellido as huesped_nombre,h.email as huesped_email,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.tenant_id=? AND DATE(r.creado_en) BETWEEN ? AND ?${s?' AND (h.nombre||? || h.apellido LIKE ? OR r.codigo LIKE ? OR hab.numero LIKE ?)':''}`).bind(tenant_id,fechaDesde,fechaHasta,...(s?[s,s,s]:[])).all());
+  if (!tipo || tipo === 'factura') queries.push(c.env.DB.prepare(`SELECT f.id,f.numero,f.total,f.metodo_pago,f.estado,f.emitida_en,h.nombre||' '||h.apellido as huesped_nombre,hab.numero as habitacion_numero FROM facturas f JOIN huespedes h ON f.huesped_id=h.id JOIN reservas r ON f.reserva_id=r.id JOIN habitaciones hab ON r.habitacion_id=hab.id WHERE f.tenant_id=? AND DATE(f.emitida_en) BETWEEN ? AND ?${s?' AND (h.nombre||? || h.apellido LIKE ? OR f.numero LIKE ?)':''}`).bind(tenant_id,fechaDesde,fechaHasta,...(s?[s,s]:[])).all());
+  if (!tipo || tipo === 'mantenimiento') queries.push(c.env.DB.prepare(`SELECT m.id,m.descripcion,m.prioridad,m.estado,m.creado_en,m.resuelto_en,hab.numero as habitacion_numero FROM mantenimiento m JOIN habitaciones hab ON m.habitacion_id=hab.id WHERE m.tenant_id=? AND DATE(m.creado_en) BETWEEN ? AND ?${s?' AND (m.descripcion LIKE ? OR hab.numero LIKE ?)':''}`).bind(tenant_id,fechaDesde,fechaHasta,...(s?[s,s]:[])).all());
 
   const allResults = await Promise.all(queries);
   const eventos = [];

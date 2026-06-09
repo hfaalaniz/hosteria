@@ -39,20 +39,22 @@ async function syncFeed(db, feed) {
     stmts.push(db.prepare('DELETE FROM reservas_externas WHERE feed_id=?').bind(feed.id));
   }
   for (const ev of eventos) {
-    stmts.push(db.prepare(`INSERT INTO reservas_externas (feed_id,habitacion_id,uid,resumen,fecha_entrada,fecha_salida,origen) VALUES (?,?,?,?,?,?,'externo') ON CONFLICT(feed_id,uid) DO UPDATE SET resumen=excluded.resumen,fecha_entrada=excluded.fecha_entrada,fecha_salida=excluded.fecha_salida`).bind(feed.id, feed.habitacion_id, ev.uid, ev.summary, ev.entrada, ev.salida));
+    stmts.push(db.prepare(`INSERT INTO reservas_externas (tenant_id,feed_id,habitacion_id,uid,resumen,fecha_entrada,fecha_salida,origen) VALUES (?,?,?,?,?,?,?,'externo') ON CONFLICT(feed_id,uid) DO UPDATE SET resumen=excluded.resumen,fecha_entrada=excluded.fecha_entrada,fecha_salida=excluded.fecha_salida`).bind(feed.tenant_id, feed.id, feed.habitacion_id, ev.uid, ev.summary, ev.entrada, ev.salida));
   }
   await db.batch(stmts);
   return { total: eventos.length };
 }
 
 icalFeeds.get('/', authMiddleware, async c => {
-  const { results } = await c.env.DB.prepare(`SELECT f.*,h.numero as habitacion_numero,(SELECT COUNT(*) FROM reservas_externas re WHERE re.feed_id=f.id) as total_bloqueados FROM ical_feeds f JOIN habitaciones h ON f.habitacion_id=h.id ORDER BY h.numero,f.nombre`).all();
+  const { tenant_id } = c.get('user');
+  const { results } = await c.env.DB.prepare(`SELECT f.*,h.numero as habitacion_numero,(SELECT COUNT(*) FROM reservas_externas re WHERE re.feed_id=f.id) as total_bloqueados FROM ical_feeds f JOIN habitaciones h ON f.habitacion_id=h.id WHERE f.tenant_id=? ORDER BY h.numero,f.nombre`).bind(tenant_id).all();
   return c.json(results);
 });
 
 icalFeeds.get('/bloqueados', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { desde, hasta } = c.req.query();
-  let where = '1=1'; const params = [];
+  let where = 're.tenant_id=?'; const params = [tenant_id];
   if (desde) { where += ' AND re.fecha_salida>=?'; params.push(desde); }
   if (hasta) { where += ' AND re.fecha_entrada<=?'; params.push(hasta); }
   const { results } = await c.env.DB.prepare(`SELECT re.*,f.nombre as feed_nombre,h.numero as habitacion_numero FROM reservas_externas re JOIN ical_feeds f ON re.feed_id=f.id JOIN habitaciones h ON re.habitacion_id=h.id WHERE ${where} ORDER BY re.fecha_entrada`).bind(...params).all();
@@ -60,23 +62,25 @@ icalFeeds.get('/bloqueados', authMiddleware, async c => {
 });
 
 icalFeeds.post('/', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { habitacion_id, nombre, url } = await c.req.json();
   if (!habitacion_id || !nombre || !url) return c.json({ error: 'habitacion_id, nombre y url son requeridos' }, 400);
-  const { meta } = await c.env.DB.prepare('INSERT INTO ical_feeds (habitacion_id,nombre,url,activo) VALUES (?,?,?,1)').bind(habitacion_id, nombre.trim(), url.trim()).run();
+  const { meta } = await c.env.DB.prepare('INSERT INTO ical_feeds (tenant_id,habitacion_id,nombre,url,activo) VALUES (?,?,?,?,1)').bind(tenant_id, habitacion_id, nombre.trim(), url.trim()).run();
   return c.json({ id: meta.last_row_id, mensaje: 'Feed creado' }, 201);
 });
 
 icalFeeds.post('/sync-all', authMiddleware, async c => {
-  const { results: feeds } = await c.env.DB.prepare('SELECT * FROM ical_feeds WHERE activo=1').all();
+  const { tenant_id } = c.get('user');
+  const { results: feeds } = await c.env.DB.prepare('SELECT * FROM ical_feeds WHERE tenant_id=? AND activo=1').bind(tenant_id).all();
   const resultados = await Promise.all(feeds.map(async feed => {
     try {
       const { total } = await syncFeed(c.env.DB, feed);
       const resultado = `OK: ${total} eventos`;
-      await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=?').bind(resultado, feed.id).run();
+      await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=? AND tenant_id=?').bind(resultado, feed.id, tenant_id).run();
       return { feed_id: feed.id, nombre: feed.nombre, resultado };
     } catch (err) {
       const errMsg = `Error: ${err.message}`;
-      await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=?').bind(errMsg, feed.id).run();
+      await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=? AND tenant_id=?').bind(errMsg, feed.id, tenant_id).run();
       return { feed_id: feed.id, nombre: feed.nombre, resultado: errMsg };
     }
   }));
@@ -84,27 +88,30 @@ icalFeeds.post('/sync-all', authMiddleware, async c => {
 });
 
 icalFeeds.put('/:id', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { nombre, url, activo } = await c.req.json();
-  await c.env.DB.prepare('UPDATE ical_feeds SET nombre=?,url=?,activo=? WHERE id=?').bind(nombre, url, activo ? 1 : 0, c.req.param('id')).run();
+  await c.env.DB.prepare('UPDATE ical_feeds SET nombre=?,url=?,activo=? WHERE id=? AND tenant_id=?').bind(nombre, url, activo ? 1 : 0, c.req.param('id'), tenant_id).run();
   return c.json({ mensaje: 'Feed actualizado' });
 });
 
 icalFeeds.delete('/:id', authMiddleware, async c => {
-  await c.env.DB.prepare('DELETE FROM ical_feeds WHERE id=?').bind(c.req.param('id')).run();
+  const { tenant_id } = c.get('user');
+  await c.env.DB.prepare('DELETE FROM ical_feeds WHERE id=? AND tenant_id=?').bind(c.req.param('id'), tenant_id).run();
   return c.json({ mensaje: 'Feed eliminado' });
 });
 
 icalFeeds.post('/:id/sync', authMiddleware, async c => {
-  const feed = await c.env.DB.prepare('SELECT * FROM ical_feeds WHERE id=?').bind(c.req.param('id')).first();
+  const { tenant_id } = c.get('user');
+  const feed = await c.env.DB.prepare('SELECT * FROM ical_feeds WHERE id=? AND tenant_id=?').bind(c.req.param('id'), tenant_id).first();
   if (!feed) return c.json({ error: 'Feed no encontrado' }, 404);
   try {
     const { total } = await syncFeed(c.env.DB, feed);
     const resultado = `OK: ${total} eventos`;
-    await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=?').bind(resultado, feed.id).run();
+    await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=? AND tenant_id=?').bind(resultado, feed.id, tenant_id).run();
     return c.json({ mensaje: resultado, total });
   } catch (err) {
     const errMsg = `Error: ${err.message}`;
-    await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=?').bind(errMsg, feed.id).run();
+    await c.env.DB.prepare('UPDATE ical_feeds SET ultimo_sync=CURRENT_TIMESTAMP,ultimo_resultado=? WHERE id=? AND tenant_id=?').bind(errMsg, feed.id, tenant_id).run();
     return c.json({ error: errMsg }, 500);
   }
 });

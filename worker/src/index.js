@@ -21,6 +21,7 @@ import { partesMantenimiento } from './routes/partes_mantenimiento.js';
 import { icalFeeds } from './routes/ical_feeds.js';
 import { ical as icalPublic } from './routes/ical.js';
 import { notificaciones } from './routes/notificaciones.js';
+import { tenants } from './routes/tenants.js';
 import { initDB } from './db/init.js';
 
 const app = new Hono();
@@ -72,5 +73,6 @@ app.route('/api/partes-mantenimiento', partesMantenimiento);
 app.route('/api/ical-feeds', icalFeeds);
 app.route('/ical', icalPublic);
 app.route('/api/notificaciones', notificaciones);
+app.route('/api/tenants', tenants);
 
 export default app;

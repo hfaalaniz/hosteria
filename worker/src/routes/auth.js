@@ -16,10 +16,10 @@ auth.post('/login', async c => {
   if (!valido) return c.json({ error: 'Credenciales inválidas' }, 401);
 
   const token = await sign(
-    { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol, exp: Math.floor(Date.now() / 1000) + 86400 },
+    { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol, tenant_id: usuario.tenant_id, exp: Math.floor(Date.now() / 1000) + 86400 },
     c.env.JWT_SECRET
   );
-  return c.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol } });
+  return c.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol, tenant_id: usuario.tenant_id } });
 });
 
 auth.get('/me', authMiddleware, async c => {

@@ -31,6 +31,7 @@ function calcPeriodo(tipo, fecha, fecha_desde, fecha_hasta) {
 }
 
 reportes.get('/ocupacion', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { tipo = 'diario', fecha, fecha_desde, fecha_hasta } = c.req.query();
   if (tipo === 'libre' && (!fecha_desde || !fecha_hasta)) return c.json({ error: 'fecha_desde y fecha_hasta requeridas' }, 400);
   const { desde, hasta } = calcPeriodo(tipo, fecha, fecha_desde, fecha_hasta);
@@ -41,16 +42,16 @@ reportes.get('/ocupacion', authMiddleware, async c => {
   const diasPeriodo = Math.round((d2 - d1) / 86400000) + 1;
 
   const [cfgRes, habsRes, reservasRes, checkinsRes, checkoutsRes, cancelRes, ingresosRes, porTipoRes, procRes, origenRes] = await Promise.all([
-    c.env.DB.prepare('SELECT clave,valor FROM configuracion').all(),
-    c.env.DB.prepare('SELECT COUNT(*) as c FROM habitaciones').first(),
-    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,h.email as huesped_email,h.telefono as huesped_telefono,hab.numero as habitacion_numero,t.nombre as tipo_nombre,t.capacidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? ORDER BY r.fecha_entrada`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.fecha_entrada BETWEEN ? AND ? AND r.estado NOT IN ('cancelada','noshow') ORDER BY r.fecha_entrada`).bind(desde, hasta).all(),
-    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.fecha_salida BETWEEN ? AND ? AND r.estado IN ('checkout','checkin') ORDER BY r.fecha_salida`).bind(desde, hasta).all(),
-    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,hab.numero as habitacion_numero FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id WHERE r.estado='cancelada' AND DATE(r.actualizado_en) BETWEEN ? AND ? ORDER BY r.actualizado_en`).bind(desde, hasta).all(),
-    c.env.DB.prepare(`SELECT COALESCE(SUM(total),0) as total,COUNT(*) as facturas FROM facturas WHERE estado='pagada' AND DATE(emitida_en) BETWEEN ? AND ?`).bind(desde, hasta).first(),
-    c.env.DB.prepare(`SELECT t.nombre as tipo,COUNT(DISTINCT hab.id) as habitaciones,COUNT(DISTINCT r.id) as reservas,COALESCE(SUM(r.adultos),0) as adultos,COALESCE(SUM(r.ninos),0) as ninos,COALESCE(SUM(r.precio_total),0) as ingresos FROM tipos_habitacion t JOIN habitaciones hab ON hab.tipo_id=t.id LEFT JOIN reservas r ON r.habitacion_id=hab.id AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? WHERE t.activo=1 GROUP BY t.id,t.nombre ORDER BY t.nombre`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT h.nacionalidad,COUNT(DISTINCT h.id) as cantidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? AND h.nacionalidad IS NOT NULL AND h.nacionalidad!='' GROUP BY h.nacionalidad ORDER BY cantidad DESC`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT origen,COUNT(*) as cantidad FROM reservas WHERE estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>? GROUP BY origen ORDER BY cantidad DESC`).bind(hasta, desde).all(),
+    c.env.DB.prepare('SELECT clave,valor FROM configuracion_mt WHERE tenant_id=?').bind(tenant_id).all(),
+    c.env.DB.prepare('SELECT COUNT(*) as c FROM habitaciones WHERE tenant_id=?').bind(tenant_id).first(),
+    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,h.email as huesped_email,h.telefono as huesped_telefono,hab.numero as habitacion_numero,t.nombre as tipo_nombre,t.capacidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.tenant_id=? AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? ORDER BY r.fecha_entrada`).bind(tenant_id, hasta, desde).all(),
+    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.tenant_id=? AND r.fecha_entrada BETWEEN ? AND ? AND r.estado NOT IN ('cancelada','noshow') ORDER BY r.fecha_entrada`).bind(tenant_id, desde, hasta).all(),
+    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,h.documento_tipo,h.documento_numero,h.nacionalidad,hab.numero as habitacion_numero,t.nombre as tipo_nombre FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id JOIN tipos_habitacion t ON hab.tipo_id=t.id WHERE r.tenant_id=? AND r.fecha_salida BETWEEN ? AND ? AND r.estado IN ('checkout','checkin') ORDER BY r.fecha_salida`).bind(tenant_id, desde, hasta).all(),
+    c.env.DB.prepare(`SELECT r.*,h.nombre||' '||h.apellido as huesped_nombre,hab.numero as habitacion_numero FROM reservas r JOIN huespedes h ON r.huesped_id=h.id JOIN habitaciones hab ON r.habitacion_id=hab.id WHERE r.tenant_id=? AND r.estado='cancelada' AND DATE(r.actualizado_en) BETWEEN ? AND ? ORDER BY r.actualizado_en`).bind(tenant_id, desde, hasta).all(),
+    c.env.DB.prepare(`SELECT COALESCE(SUM(total),0) as total,COUNT(*) as facturas FROM facturas WHERE tenant_id=? AND estado='pagada' AND DATE(emitida_en) BETWEEN ? AND ?`).bind(tenant_id, desde, hasta).first(),
+    c.env.DB.prepare(`SELECT t.nombre as tipo,COUNT(DISTINCT hab.id) as habitaciones,COUNT(DISTINCT r.id) as reservas,COALESCE(SUM(r.adultos),0) as adultos,COALESCE(SUM(r.ninos),0) as ninos,COALESCE(SUM(r.precio_total),0) as ingresos FROM tipos_habitacion t JOIN habitaciones hab ON hab.tipo_id=t.id AND hab.tenant_id=t.tenant_id LEFT JOIN reservas r ON r.habitacion_id=hab.id AND r.tenant_id=t.tenant_id AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? WHERE t.tenant_id=? AND t.activo=1 GROUP BY t.id,t.nombre ORDER BY t.nombre`).bind(hasta, desde, tenant_id).all(),
+    c.env.DB.prepare(`SELECT h.nacionalidad,COUNT(DISTINCT h.id) as cantidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.tenant_id=? AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? AND h.nacionalidad IS NOT NULL AND h.nacionalidad!='' GROUP BY h.nacionalidad ORDER BY cantidad DESC`).bind(tenant_id, hasta, desde).all(),
+    c.env.DB.prepare(`SELECT origen,COUNT(*) as cantidad FROM reservas WHERE tenant_id=? AND estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>? GROUP BY origen ORDER BY cantidad DESC`).bind(tenant_id, hasta, desde).all(),
   ]);
 
   const cfg = cfgRes.results.reduce((a, r) => ({ ...a, [r.clave]: r.valor }), {});
@@ -96,6 +97,7 @@ reportes.get('/ocupacion', authMiddleware, async c => {
 });
 
 reportes.get('/estadisticas', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { tipo = 'hoy' } = c.req.query();
   const hoy = new Date().toISOString().split('T')[0];
   let desde;
@@ -110,17 +112,17 @@ reportes.get('/estadisticas', authMiddleware, async c => {
   const diasPeriodo = Math.round((d2 - d1) / 86400000) + 1;
 
   const [cfgRes, habsRes, reservasRes, habOcupRes, checkinsCnt, checkoutsCnt, cancelCnt, ingresosRes, porTipoRes, procRes, origRes] = await Promise.all([
-    c.env.DB.prepare('SELECT clave,valor FROM configuracion').all(),
-    c.env.DB.prepare('SELECT COUNT(*) as c FROM habitaciones').first(),
-    c.env.DB.prepare(`SELECT r.adultos,r.ninos,r.fecha_entrada,r.fecha_salida,h.nacionalidad,r.origen FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>?`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT COUNT(DISTINCT habitacion_id) as c FROM reservas WHERE estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>?`).bind(hasta, desde).first(),
-    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE fecha_entrada BETWEEN ? AND ? AND estado NOT IN ('cancelada','noshow')`).bind(desde, hasta).first(),
-    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE fecha_salida BETWEEN ? AND ? AND estado IN ('checkout','checkin')`).bind(desde, hasta).first(),
-    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE estado='cancelada' AND DATE(actualizado_en) BETWEEN ? AND ?`).bind(desde, hasta).first(),
-    c.env.DB.prepare(`SELECT COALESCE(SUM(total),0) as total,COUNT(*) as cnt FROM facturas WHERE estado='pagada' AND DATE(emitida_en) BETWEEN ? AND ?`).bind(desde, hasta).first(),
-    c.env.DB.prepare(`SELECT t.nombre as tipo,COUNT(DISTINCT hab.id) as habitaciones_total,COUNT(DISTINCT r.habitacion_id) as habitaciones_ocupadas,COALESCE(SUM(r.adultos),0) as adultos,COALESCE(SUM(r.ninos),0) as ninos FROM tipos_habitacion t JOIN habitaciones hab ON hab.tipo_id=t.id LEFT JOIN reservas r ON r.habitacion_id=hab.id AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? WHERE t.activo=1 GROUP BY t.id,t.nombre ORDER BY t.nombre`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT h.nacionalidad,COUNT(DISTINCT r.id) as cantidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? AND h.nacionalidad IS NOT NULL AND h.nacionalidad!='' GROUP BY h.nacionalidad ORDER BY cantidad DESC`).bind(hasta, desde).all(),
-    c.env.DB.prepare(`SELECT origen,COUNT(*) as cantidad FROM reservas WHERE estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>? GROUP BY origen ORDER BY cantidad DESC`).bind(hasta, desde).all(),
+    c.env.DB.prepare('SELECT clave,valor FROM configuracion_mt WHERE tenant_id=?').bind(tenant_id).all(),
+    c.env.DB.prepare('SELECT COUNT(*) as c FROM habitaciones WHERE tenant_id=?').bind(tenant_id).first(),
+    c.env.DB.prepare(`SELECT r.adultos,r.ninos,r.fecha_entrada,r.fecha_salida,h.nacionalidad,r.origen FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.tenant_id=? AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>?`).bind(tenant_id, hasta, desde).all(),
+    c.env.DB.prepare(`SELECT COUNT(DISTINCT habitacion_id) as c FROM reservas WHERE tenant_id=? AND estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>?`).bind(tenant_id, hasta, desde).first(),
+    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE tenant_id=? AND fecha_entrada BETWEEN ? AND ? AND estado NOT IN ('cancelada','noshow')`).bind(tenant_id, desde, hasta).first(),
+    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE tenant_id=? AND fecha_salida BETWEEN ? AND ? AND estado IN ('checkout','checkin')`).bind(tenant_id, desde, hasta).first(),
+    c.env.DB.prepare(`SELECT COUNT(*) as c FROM reservas WHERE tenant_id=? AND estado='cancelada' AND DATE(actualizado_en) BETWEEN ? AND ?`).bind(tenant_id, desde, hasta).first(),
+    c.env.DB.prepare(`SELECT COALESCE(SUM(total),0) as total,COUNT(*) as cnt FROM facturas WHERE tenant_id=? AND estado='pagada' AND DATE(emitida_en) BETWEEN ? AND ?`).bind(tenant_id, desde, hasta).first(),
+    c.env.DB.prepare(`SELECT t.nombre as tipo,COUNT(DISTINCT hab.id) as habitaciones_total,COUNT(DISTINCT r.habitacion_id) as habitaciones_ocupadas,COALESCE(SUM(r.adultos),0) as adultos,COALESCE(SUM(r.ninos),0) as ninos FROM tipos_habitacion t JOIN habitaciones hab ON hab.tipo_id=t.id AND hab.tenant_id=t.tenant_id LEFT JOIN reservas r ON r.habitacion_id=hab.id AND r.tenant_id=t.tenant_id AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? WHERE t.tenant_id=? AND t.activo=1 GROUP BY t.id,t.nombre ORDER BY t.nombre`).bind(hasta, desde, tenant_id).all(),
+    c.env.DB.prepare(`SELECT h.nacionalidad,COUNT(DISTINCT r.id) as cantidad FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.tenant_id=? AND r.estado NOT IN ('cancelada','noshow') AND r.fecha_entrada<=? AND r.fecha_salida>? AND h.nacionalidad IS NOT NULL AND h.nacionalidad!='' GROUP BY h.nacionalidad ORDER BY cantidad DESC`).bind(tenant_id, hasta, desde).all(),
+    c.env.DB.prepare(`SELECT origen,COUNT(*) as cantidad FROM reservas WHERE tenant_id=? AND estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>? GROUP BY origen ORDER BY cantidad DESC`).bind(tenant_id, hasta, desde).all(),
   ]);
 
   const cfg = cfgRes.results.reduce((a, r) => ({ ...a, [r.clave]: r.valor }), {});
@@ -142,12 +144,11 @@ reportes.get('/estadisticas', authMiddleware, async c => {
   const totalProc = procRes.results.reduce((s, p) => s + p.cantidad, 0);
   const totalOrig = origRes.results.reduce((s, o) => s + o.cantidad, 0);
 
-  // per-day breakdown
   const porDiaPromises = [];
   for (let i = 0; i < diasPeriodo; i++) {
     const dia = new Date(d1); dia.setDate(d1.getDate() + i);
     const diaStr = dia.toISOString().split('T')[0];
-    porDiaPromises.push(c.env.DB.prepare(`SELECT COUNT(DISTINCT habitacion_id) as c FROM reservas WHERE estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>?`).bind(diaStr, diaStr).first().then(r => ({ fecha: diaStr, ocupadas: r.c, pct: totalHabs > 0 ? Math.round((r.c / totalHabs) * 100) : 0 })));
+    porDiaPromises.push(c.env.DB.prepare(`SELECT COUNT(DISTINCT habitacion_id) as c FROM reservas WHERE tenant_id=? AND estado NOT IN ('cancelada','noshow') AND fecha_entrada<=? AND fecha_salida>?`).bind(tenant_id, diaStr, diaStr).first().then(r => ({ fecha: diaStr, ocupadas: r.c, pct: totalHabs > 0 ? Math.round((r.c / totalHabs) * 100) : 0 })));
   }
   const porDia = await Promise.all(porDiaPromises);
 
@@ -173,10 +174,11 @@ reportes.get('/estadisticas', authMiddleware, async c => {
 });
 
 reportes.get('/huespedes-frecuentes', authMiddleware, async c => {
+  const { tenant_id } = c.get('user');
   const { limite = 10, desde, hasta } = c.req.query();
   const limitVal = parseInt(limite, 10) || 10;
-  let q = `SELECT h.id AS huesped_id,h.nombre||' '||h.apellido AS nombre,h.email,h.nacionalidad,COUNT(r.id) AS total_reservas,SUM(r.noches) AS total_noches,COALESCE(SUM(r.precio_total),0) AS total_gastado,MIN(r.fecha_entrada) AS primera_visita,MAX(r.fecha_entrada) AS ultima_visita FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.estado NOT IN ('cancelada','noshow')`;
-  const params = [];
+  let q = `SELECT h.id AS huesped_id,h.nombre||' '||h.apellido AS nombre,h.email,h.nacionalidad,COUNT(r.id) AS total_reservas,SUM(r.noches) AS total_noches,COALESCE(SUM(r.precio_total),0) AS total_gastado,MIN(r.fecha_entrada) AS primera_visita,MAX(r.fecha_entrada) AS ultima_visita FROM reservas r JOIN huespedes h ON r.huesped_id=h.id WHERE r.tenant_id=? AND r.estado NOT IN ('cancelada','noshow')`;
+  const params = [tenant_id];
   if (desde) { q += ' AND r.fecha_entrada>=?'; params.push(desde); }
   if (hasta) { q += ' AND r.fecha_entrada<=?'; params.push(hasta); }
   q += ' GROUP BY h.id HAVING COUNT(r.id)>1 ORDER BY total_reservas DESC,total_gastado DESC LIMIT ?';

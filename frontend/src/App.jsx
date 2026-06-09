@@ -8,6 +8,7 @@ import './i18n';
 
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import Registro from './pages/Registro';
 import Dashboard from './pages/Dashboard';
 import Habitaciones from './pages/Habitaciones';
 import Reservas from './pages/Reservas';
@@ -51,6 +52,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={usuario ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/registro" element={usuario ? <Navigate to="/" replace /> : <Registro />} />
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
         <Route path="calendario"   element={<ModuloRoute modulo="calendario">  <Calendario />   </ModuloRoute>} />
