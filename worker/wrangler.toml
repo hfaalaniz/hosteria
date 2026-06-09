@@ -6,11 +6,12 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "hosteria-db"
-database_id = "PLACEHOLDER_DB_ID"
+database_id = "79cd435f-1c0e-4b95-8636-3ceb0e218268"
 
-[[r2_buckets]]
-binding = "R2"
-bucket_name = "hosteria-imgs"
+# R2 binding - enable after activating R2 in Cloudflare Dashboard:
+# [[r2_buckets]]
+# binding = "R2"
+# bucket_name = "hosteria-imgs"
 
 [vars]
 FRONTEND_URL = "https://hosteria-admin.pages.dev"
