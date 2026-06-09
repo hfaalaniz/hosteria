@@ -633,12 +633,33 @@ export default function Huespedes() {
     api.get(`/huespedes${q}`).then(r => setHuespedes(r.data)).finally(() => setCargando(false));
   };
 
-  useEffect(() => { cargar(); }, [buscar]);
+  useEffect(() => {
+    setCargando(true);
+    const controller = new AbortController();
+    const q = buscar ? `?buscar=${encodeURIComponent(buscar)}` : '';
+    api.get(`/huespedes${q}`, { signal: controller.signal })
+      .then(r => setHuespedes(r.data))
+      .catch(e => { if (e.name !== 'CanceledError' && e.code !== 'ERR_CANCELED') toast.error('Error al cargar huéspedes'); })
+      .finally(() => setCargando(false));
+    return () => controller.abort();
+  }, [buscar]);
+
   useAutoRefresh(cargar, 30000);
 
   async function verDetalle(h) {
-    const r = await api.get(`/huespedes/${h.id}`);
-    setDetalleData({ ...r.data, total_reservas: h.total_reservas, total_gastado: h.total_gastado, ultima_visita: h.ultima_visita });
+    setDetalleData(null);
+    try {
+      const r = await api.get(`/huespedes/${h.id}`);
+      // Solo actualizar si el modal sigue abierto para este mismo huésped
+      setDetalle(current => {
+        if (current?.id === h.id) {
+          setDetalleData({ ...r.data, total_reservas: h.total_reservas, total_gastado: h.total_gastado, ultima_visita: h.ultima_visita });
+        }
+        return current;
+      });
+    } catch {
+      toast.error('Error al cargar detalle del huésped');
+    }
   }
 
   async function guardar(form) {

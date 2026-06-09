@@ -23,7 +23,7 @@ function ModalCheckout({ reserva, onConfirmar, onCancelar }) {
     ]).then(([c, s]) => {
       setConsumos(c.data);
       setServicios(s.data);
-    });
+    }).catch(() => toast.error('Error al cargar datos del checkout'));
   }, [reserva]);
 
   // Auto-completar precio al seleccionar servicio

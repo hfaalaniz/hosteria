@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { ResumenCamas, ModalHabitacion } from './Inicio';
 import CalendarioReserva from '../components/CalendarioReserva';
@@ -122,7 +122,7 @@ function FormularioReserva({ hab, busqueda, senia, onExito, onCancelar }) {
     e.preventDefault();
     setEnviando(true);
     try {
-      const r = await axios.post('/api/web/reservar', {
+      const r = await api.post('/api/web/reservar', {
         habitacion_id: hab.id,
         fecha_entrada: busqueda.fecha_entrada,
         fecha_salida: busqueda.fecha_salida,
@@ -248,7 +248,7 @@ function PantallaConfirmacion({ codigo, senia, onVolver }) {
 
   useEffect(() => {
     if (senia != null) {
-      axios.get('/api/web/config').then(r => setDatosPago(r.data)).catch(() => {});
+      api.get('/api/web/config').then(r => setDatosPago(r.data)).catch(() => {});
     }
   }, [senia]);
 
@@ -414,7 +414,7 @@ export default function Reservar() {
     const currentAdultos  = currentParams.get('adultos')       || busqueda.adultos;
 
     setCargando(true);
-    axios.get(`/api/web/disponibilidad`, {
+    api.get(`/api/web/disponibilidad`, {
       params: {
         fecha_entrada: currentEntrada,
         fecha_salida:  currentSalida,

@@ -173,29 +173,34 @@ router.post('/', auth, (req, res) => {
       return res.status(400).json({ error: 'Huésped, habitación y fechas son requeridos' });
     }
 
-    const conflicto = db.prepare(`
-      SELECT id FROM reservas
-      WHERE habitacion_id = ? AND estado NOT IN ('cancelada','checkout','noshow')
-      AND fecha_entrada < ? AND fecha_salida > ?
-    `).get(habitacion_id, fecha_salida, fecha_entrada);
-    if (conflicto) return res.status(400).json({ error: 'La habitación no está disponible en esas fechas' });
-
     const noches = calcularNoches(fecha_entrada, fecha_salida);
     if (noches <= 0) return res.status(400).json({ error: 'Las fechas son inválidas' });
 
-    const precio_total = precio_noche * noches;
+    const precioNocheNum = Number(precio_noche);
+    if (!Number.isFinite(precioNocheNum) || precioNocheNum <= 0) {
+      return res.status(400).json({ error: 'El precio por noche debe ser un número positivo' });
+    }
+
+    const precio_total = precioNocheNum * noches;
     let codigo = generarCodigo();
     while (db.prepare('SELECT id FROM reservas WHERE codigo = ?').get(codigo)) {
       codigo = generarCodigo();
     }
 
-    // Crear reserva + acompañantes en una transacción
+    // Crear reserva + acompañantes en una transacción que incluye el check de disponibilidad
     const crearReserva = db.transaction(() => {
+      const conflicto = db.prepare(`
+        SELECT id FROM reservas
+        WHERE habitacion_id = ? AND estado NOT IN ('cancelada','checkout','noshow')
+        AND fecha_entrada < ? AND fecha_salida > ?
+      `).get(habitacion_id, fecha_salida, fecha_entrada);
+      if (conflicto) throw Object.assign(new Error('La habitación no está disponible en esas fechas'), { status: 400 });
+
       const result = db.prepare(`
         INSERT INTO reservas (codigo, huesped_id, habitacion_id, fecha_entrada, fecha_salida, adultos, ninos, estado, origen, precio_total, precio_noche, noches, notas)
         VALUES (?, ?, ?, ?, ?, ?, ?, 'confirmada', ?, ?, ?, ?, ?)
       `).run(codigo, huesped_id, habitacion_id, fecha_entrada, fecha_salida,
-             adultos || 1, ninos || 0, origen || 'directo', precio_total, precio_noche, noches, notas || null);
+             adultos || 1, ninos || 0, origen || 'directo', precio_total, precioNocheNum, noches, notas || null);
 
       const reservaId = result.lastInsertRowid;
 
@@ -245,7 +250,7 @@ router.post('/', auth, (req, res) => {
     res.status(201).json({ id: reservaId, codigo, mensaje: 'Reserva creada' });
   } catch (err) {
     console.error('POST /reservas error:', err);
-    res.status(500).json({ error: err.message });
+    res.status(err.status || 500).json({ error: err.message });
   }
 });
 

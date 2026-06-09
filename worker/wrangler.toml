@@ -1,0 +1,21 @@
+name = "hosteria-api"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hosteria-db"
+database_id = "PLACEHOLDER_DB_ID"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "hosteria-imgs"
+
+[vars]
+FRONTEND_URL = "https://hosteria-admin.pages.dev"
+WEB_URL = "https://hosteria-web.pages.dev"
+
+# Secrets (set via: wrangler secret put JWT_SECRET)
+# JWT_SECRET
+# RESEND_API_KEY

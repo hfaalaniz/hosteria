@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 export default function MiReserva() {
@@ -17,7 +17,7 @@ export default function MiReserva() {
     setNoEncontrada(false);
     setReserva(null);
     try {
-      const r = await axios.get(`/api/web/estado/${codigo.trim().toUpperCase()}`);
+      const r = await api.get(`/api/web/estado/${codigo.trim().toUpperCase()}`);
       setReserva(r.data);
     } catch (e) {
       if (e.response?.status === 404) setNoEncontrada(true);

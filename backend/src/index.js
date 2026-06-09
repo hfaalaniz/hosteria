@@ -7,7 +7,15 @@ const { initDB } = require('./db/database');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:4001',
+    process.env.FRONTEND_URL,
+    process.env.WEB_URL,
+  ].filter(Boolean),
+  credentials: true,
+}));
 app.use(express.json());
 
 // Servir imágenes de habitaciones estáticamente

@@ -57,32 +57,39 @@ router.post('/', auth, (req, res) => {
   const reserva = db.prepare('SELECT * FROM reservas WHERE id = ?').get(reserva_id);
   if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
 
-  const yaExiste = db.prepare("SELECT id FROM facturas WHERE reserva_id = ? AND estado != 'anulada'").get(reserva_id);
-  if (yaExiste) return res.status(400).json({ error: 'Ya existe una factura para esta reserva' });
+  try {
+    const resultado = db.transaction(() => {
+      const yaExiste = db.prepare("SELECT id FROM facturas WHERE reserva_id = ? AND estado != 'anulada'").get(reserva_id);
+      if (yaExiste) throw Object.assign(new Error('Ya existe una factura para esta reserva'), { status: 400 });
 
-  const consumos = db.prepare('SELECT SUM(total) as total FROM consumos WHERE reserva_id = ?').get(reserva_id);
-  const configImp = db.prepare("SELECT valor FROM configuracion WHERE clave = 'impuesto_porcentaje'").get();
-  const impPct = parseFloat(configImp?.valor || '0') / 100;
+      const consumos = db.prepare('SELECT SUM(total) as total FROM consumos WHERE reserva_id = ?').get(reserva_id);
+      const configImp = db.prepare("SELECT valor FROM configuracion WHERE clave = 'impuesto_porcentaje'").get();
+      const impPct = parseFloat(configImp?.valor || '0') / 100;
 
-  const subtotal = reserva.precio_total + (consumos?.total || 0);
-  const descuentoVal = descuento || 0;
-  const base = subtotal - descuentoVal;
-  const impuestos = base * impPct;
-  const total = base + impuestos;
+      const subtotal = reserva.precio_total + (consumos?.total || 0);
+      const descuentoVal = descuento || 0;
+      const base = subtotal - descuentoVal;
+      const impuestos = base * impPct;
+      const total = base + impuestos;
 
-  const numero = generarNumeroFactura();
-  const result = db.prepare(`
-    INSERT INTO facturas (numero, reserva_id, huesped_id, subtotal, impuestos, descuento, total, metodo_pago, estado, notas)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pagada', ?)
-  `).run(numero, reserva_id, reserva.huesped_id, subtotal, impuestos, descuentoVal, total, metodo_pago || 'efectivo', notas);
+      const numero = generarNumeroFactura();
+      const result = db.prepare(`
+        INSERT INTO facturas (numero, reserva_id, huesped_id, subtotal, impuestos, descuento, total, metodo_pago, estado, notas)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pagada', ?)
+      `).run(numero, reserva_id, reserva.huesped_id, subtotal, impuestos, descuentoVal, total, metodo_pago || 'efectivo', notas);
 
-  // Marcar reserva como checkout si estaba en checkin
-  if (reserva.estado === 'checkin') {
-    db.prepare("UPDATE reservas SET estado = 'checkout', actualizado_en = CURRENT_TIMESTAMP WHERE id = ?").run(reserva_id);
-    db.prepare("UPDATE habitaciones SET estado = 'limpieza' WHERE id = ?").run(reserva.habitacion_id);
+      if (reserva.estado === 'checkin') {
+        db.prepare("UPDATE reservas SET estado = 'checkout', actualizado_en = CURRENT_TIMESTAMP WHERE id = ?").run(reserva_id);
+        db.prepare("UPDATE habitaciones SET estado = 'limpieza' WHERE id = ?").run(reserva.habitacion_id);
+      }
+
+      return { id: result.lastInsertRowid, numero, total };
+    })();
+
+    res.status(201).json({ ...resultado, mensaje: 'Factura generada' });
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
   }
-
-  res.status(201).json({ id: result.lastInsertRowid, numero, total, mensaje: 'Factura generada' });
 });
 
 router.patch('/:id/anular', auth, (req, res) => {

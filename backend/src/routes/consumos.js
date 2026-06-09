@@ -17,11 +17,16 @@ router.post('/', auth, (req, res) => {
   const { reserva_id, servicio_id, descripcion, cantidad, precio_unitario } = req.body;
   if (!reserva_id || !descripcion || !precio_unitario) return res.status(400).json({ error: 'Datos incompletos' });
 
-  const total = (cantidad || 1) * precio_unitario;
+  const precioNum = Number(precio_unitario);
+  const cantNum = Number(cantidad) || 1;
+  if (!Number.isFinite(precioNum) || precioNum <= 0) return res.status(400).json({ error: 'El precio debe ser un número positivo' });
+  if (!Number.isFinite(cantNum) || cantNum <= 0) return res.status(400).json({ error: 'La cantidad debe ser un número positivo' });
+
+  const total = cantNum * precioNum;
   const result = db.prepare(`
     INSERT INTO consumos (reserva_id, servicio_id, descripcion, cantidad, precio_unitario, total)
     VALUES (?, ?, ?, ?, ?, ?)
-  `).run(reserva_id, servicio_id || null, descripcion, cantidad || 1, precio_unitario, total);
+  `).run(reserva_id, servicio_id || null, descripcion, cantNum, precioNum, total);
 
   res.status(201).json({ id: result.lastInsertRowid, mensaje: 'Consumo registrado' });
 });

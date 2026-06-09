@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { DESCUENTOS_DEFAULT } from '../utils/descuentos';
 
 let cache = null; // cache en módulo para no re-fetcher entre componentes
@@ -9,7 +9,7 @@ export function useDescuentos() {
 
   useEffect(() => {
     if (cache) return;
-    axios.get('/api/web/config').then(r => {
+    api.get('/api/web/config').then(r => {
       const raw = r.data.descuentos_noches;
       if (raw) {
         try {

@@ -589,17 +589,6 @@ export default function Reservas() {
     }
   }
 
-  async function marcarNoshow(reserva) {
-    setMarcandoNoshow(reserva.id);
-    try {
-      await api.patch(`/reservas/${reserva.id}/estado`, { estado: 'noshow' });
-      toast.success(`Reserva ${reserva.codigo} marcada como no-show`);
-      cargar();
-    } catch (e) {
-      toast.error(e.response?.data?.error || 'Error');
-    } finally { setMarcandoNoshow(null); }
-  }
-
   const columnas = [
     { key: 'codigo', label: 'Código', render: v => <span className="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">{v}</span> },
     { key: 'huesped_nombre', label: 'Huésped' },

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../api/axios';
 import { descuentoPara, precioConDescuento } from '../utils/descuentos';
 import { useDescuentos } from '../hooks/useDescuentos';
 
@@ -149,7 +149,7 @@ export default function CalendarioReserva({ hab, onConfirmar, onCerrar }) {
   // Cargar días ocupados
   useEffect(() => {
     setCargando(true);
-    axios.get(`/api/web/ocupacion/${hab.id}`)
+    api.get(`/api/web/ocupacion/${hab.id}`)
       .then(r => setDiasOcupados(new Set(r.data.dias_ocupados)))
       .finally(() => setCargando(false));
   }, [hab.id]);

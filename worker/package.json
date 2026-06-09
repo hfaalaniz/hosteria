@@ -1,0 +1,19 @@
+{
+  "name": "hosteria-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 execute hosteria-db --file=./schema.sql"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "bcryptjs": "^2.4.3",
+    "@tsndr/cloudflare-worker-jwt": "^2.5.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0",
+    "@cloudflare/workers-types": "^4.20241022.0"
+  }
+}

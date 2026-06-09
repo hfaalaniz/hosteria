@@ -985,7 +985,8 @@ export default function Configuracion() {
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           {habitaciones.map(hab => {
-            const url = `${window.location.protocol}//${window.location.hostname}:5000/ical/${hab.id}.ics`;
+            const workerBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_API_PORT || '5000'}`;
+            const url = `${workerBase}/ical/${hab.id}.ics`;
             return (
               <div key={hab.id} className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2">
                 <div className="shrink-0 text-xs font-semibold text-slate-600 w-16">

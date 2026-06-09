@@ -13,11 +13,15 @@ router.get('/', auth, adminOnly, (req, res) => {
   res.json(usuarios);
 });
 
+const ROLES_VALIDOS = ['admin', 'recepcion', 'limpieza', 'mantenimiento'];
+
 // Crear usuario (solo admin)
 router.post('/', auth, adminOnly, (req, res) => {
   const { nombre, email, password, rol } = req.body;
   if (!nombre || !email || !password || !rol)
     return res.status(400).json({ error: 'Nombre, email, contraseña y rol son requeridos' });
+  if (!ROLES_VALIDOS.includes(rol))
+    return res.status(400).json({ error: `Rol inválido. Valores permitidos: ${ROLES_VALIDOS.join(', ')}` });
 
   const existe = db.prepare('SELECT id FROM usuarios WHERE email = ?').get(email);
   if (existe) return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
@@ -35,6 +39,8 @@ router.put('/:id', auth, adminOnly, (req, res) => {
   const { nombre, email, rol, activo } = req.body;
   if (!nombre || !email || !rol)
     return res.status(400).json({ error: 'Nombre, email y rol son requeridos' });
+  if (!ROLES_VALIDOS.includes(rol))
+    return res.status(400).json({ error: `Rol inválido. Valores permitidos: ${ROLES_VALIDOS.join(', ')}` });
 
   const existe = db.prepare('SELECT id FROM usuarios WHERE email = ? AND id != ?').get(email, req.params.id);
   if (existe) return res.status(409).json({ error: 'Ese email ya está en uso por otro usuario' });

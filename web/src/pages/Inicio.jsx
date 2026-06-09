@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../api/axios';
 import CalendarioReserva from '../components/CalendarioReserva';
 import { descuentoPara, precioConDescuento } from '../utils/descuentos';
 import { useDescuentos } from '../hooks/useDescuentos';
@@ -354,7 +354,7 @@ export default function Inicio() {
   const [habCalendario, setHabCalendario] = useState(null);
 
   useAutoRefresh(() => {
-    axios.get('/api/web/habitaciones')
+    api.get('/api/web/habitaciones')
       .then(r => setHabitaciones(r.data))
       .finally(() => setCargando(false));
   }, 60000);
