@@ -20,7 +20,9 @@ export default function Checkin() {
       api.get('/reservas?estado=pendiente'),
       api.get('/reservas?estado=confirmada'),
     ]).then(([pend, conf]) => {
-      setReservas([...pend.data, ...conf.data].sort((a, b) => a.fecha_entrada.localeCompare(b.fecha_entrada)));
+      const p = Array.isArray(pend.data) ? pend.data : [];
+      const c = Array.isArray(conf.data) ? conf.data : [];
+      setReservas([...p, ...c].sort((a, b) => a.fecha_entrada.localeCompare(b.fecha_entrada)));
     }).finally(() => setCargando(false));
   };
 

@@ -11,7 +11,7 @@ function FormMantenimiento({ onGuardar, onCancelar }) {
   const [habitaciones, setHabitaciones] = useState([]);
 
   useEffect(() => {
-    api.get('/habitaciones').then(r => setHabitaciones(r.data));
+    api.get('/habitaciones').then(r => setHabitaciones(Array.isArray(r.data) ? r.data : []));
   }, []);
 
   return (
@@ -58,7 +58,7 @@ export default function Mantenimiento() {
   const cargar = () => {
     setCargando(true);
     const q = filtroEstado ? `?estado=${filtroEstado}` : '';
-    api.get(`/mantenimiento${q}`).then(r => setReportes(r.data)).finally(() => setCargando(false));
+    api.get(`/mantenimiento${q}`).then(r => setReportes(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useEffect(() => { cargar(); }, [filtroEstado]);

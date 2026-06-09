@@ -87,7 +87,7 @@ export default function Facturacion() {
 
   const cargar = () => {
     setCargando(true);
-    api.get('/facturas').then(r => setFacturas(r.data)).finally(() => setCargando(false));
+    api.get('/facturas').then(r => setFacturas(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useEffect(() => { cargar(); }, []);

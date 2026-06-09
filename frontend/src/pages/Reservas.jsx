@@ -61,7 +61,7 @@ function FormReserva({ onGuardar, onCancelar }) {
     api.get('/habitaciones/disponibles', {
       params: { fecha_entrada: fechas.fecha_entrada, fecha_salida: fechas.fecha_salida, adultos: fechas.adultos }
     }).then(r => {
-      setHabitaciones(r.data);
+      setHabitaciones(Array.isArray(r.data) ? r.data : []);
       setPaso(2);
     }).catch(() => toast.error('Error al buscar disponibilidad'))
       .finally(() => setCargandoHabs(false));
@@ -529,8 +529,8 @@ export default function Reservas() {
       api.get(`/reservas?${p}`),
       api.get('/reservas/alertas/noshow'),
     ]).then(([r, alertas]) => {
-      setReservas(r.data);
-      setAlertasNoshow(alertas.data);
+      setReservas(Array.isArray(r.data) ? r.data : []);
+      setAlertasNoshow(Array.isArray(alertas.data) ? alertas.data : []);
     }).finally(() => setCargando(false));
   };
 

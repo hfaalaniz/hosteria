@@ -355,7 +355,7 @@ export default function Inicio() {
 
   useAutoRefresh(() => {
     api.get('/api/web/habitaciones')
-      .then(r => setHabitaciones(r.data))
+      .then(r => setHabitaciones(Array.isArray(r.data) ? r.data : []))
       .finally(() => setCargando(false));
   }, 60000);
 

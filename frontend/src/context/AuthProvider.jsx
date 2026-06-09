@@ -18,7 +18,10 @@ export function AuthProvider({ children }) {
       return;
     }
     api.get('/auth/me')
-      .then(res => setUsuario(res.data))
+      .then(res => {
+        if (!res.data?.tenant_id) { limpiarSesion(); return; }
+        setUsuario(res.data);
+      })
       .catch(() => limpiarSesion())
       .finally(() => setCargando(false));
   }, [limpiarSesion]);
@@ -38,6 +41,7 @@ export function AuthProvider({ children }) {
   async function refreshUsuario() {
     try {
       const res = await api.get('/auth/me');
+      if (!res.data?.tenant_id) { limpiarSesion(); return; }
       setUsuario(res.data);
     } catch {
       limpiarSesion();

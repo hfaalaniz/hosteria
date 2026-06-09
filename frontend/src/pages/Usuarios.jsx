@@ -136,7 +136,7 @@ export default function Usuarios() {
 
   const cargar = () => {
     setCargando(true);
-    api.get('/usuarios').then(r => setUsuarios(r.data)).finally(() => setCargando(false));
+    api.get('/usuarios').then(r => setUsuarios(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useEffect(() => { cargar(); }, []);

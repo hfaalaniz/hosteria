@@ -24,6 +24,6 @@ auth.post('/login', async c => {
 
 auth.get('/me', authMiddleware, async c => {
   const user = c.get('user');
-  const usuario = await c.env.DB.prepare('SELECT id, nombre, email, rol FROM usuarios WHERE id = ?').bind(user.id).first();
+  const usuario = await c.env.DB.prepare('SELECT id, nombre, email, rol, tenant_id FROM usuarios WHERE id = ?').bind(user.id).first();
   return c.json(usuario);
 });

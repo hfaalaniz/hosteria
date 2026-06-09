@@ -150,7 +150,7 @@ export default function CalendarioReserva({ hab, onConfirmar, onCerrar }) {
   useEffect(() => {
     setCargando(true);
     api.get(`/api/web/ocupacion/${hab.id}`)
-      .then(r => setDiasOcupados(new Set(r.data.dias_ocupados)))
+      .then(r => setDiasOcupados(new Set(r.data.dias_ocupados || [])))
       .finally(() => setCargando(false));
   }, [hab.id]);
 

@@ -235,7 +235,7 @@ function ModalNuevaReserva({ hab, fechaInicio, onGuardar, onCerrar }) {
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
-    if (buscar.length >= 2) api.get(`/huespedes?buscar=${buscar}`).then(r => setResultados(r.data));
+    if (buscar.length >= 2) api.get(`/huespedes?buscar=${buscar}`).then(r => setResultados(Array.isArray(r.data) ? r.data : []));
     else setResultados([]);
   }, [buscar]);
 

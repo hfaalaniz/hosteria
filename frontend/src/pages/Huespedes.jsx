@@ -630,7 +630,7 @@ export default function Huespedes() {
   const cargar = () => {
     setCargando(true);
     const q = buscar ? `?buscar=${encodeURIComponent(buscar)}` : '';
-    api.get(`/huespedes${q}`).then(r => setHuespedes(r.data)).finally(() => setCargando(false));
+    api.get(`/huespedes${q}`).then(r => setHuespedes(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useEffect(() => {
@@ -638,7 +638,7 @@ export default function Huespedes() {
     const controller = new AbortController();
     const q = buscar ? `?buscar=${encodeURIComponent(buscar)}` : '';
     api.get(`/huespedes${q}`, { signal: controller.signal })
-      .then(r => setHuespedes(r.data))
+      .then(r => setHuespedes(Array.isArray(r.data) ? r.data : []))
       .catch(e => { if (e.name !== 'CanceledError' && e.code !== 'ERR_CANCELED') toast.error('Error al cargar huéspedes'); })
       .finally(() => setCargando(false));
     return () => controller.abort();

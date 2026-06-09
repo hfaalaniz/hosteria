@@ -421,7 +421,7 @@ export default function Reservar() {
         adultos:       currentAdultos,
       }
     }).then(r => {
-      const lista = r.data;
+      const lista = Array.isArray(r.data) ? r.data : [];
       setDisponibles(lista);
       // Si vienen con hab_id pre-seleccionado desde el calendario, ir directo al formulario
       if (currentHabId && lista.length > 0) {

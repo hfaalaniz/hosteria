@@ -43,7 +43,7 @@ function ModalCheckout({ reserva, onConfirmar, onCancelar }) {
     try {
       await api.post('/consumos', { reserva_id: reserva.id, ...nuevoConsumo });
       const r = await api.get(`/consumos/reserva/${reserva.id}`);
-      setConsumos(r.data);
+      setConsumos(Array.isArray(r.data) ? r.data : []);
       setNuevoConsumo({ servicio_id: '', descripcion: '', cantidad: 1, precio_unitario: '' });
       toast.success('Consumo agregado');
     } catch (e) {
@@ -165,7 +165,7 @@ export default function Checkout() {
 
   const cargar = () => {
     setCargando(true);
-    api.get('/reservas?estado=checkin').then(r => setReservas(r.data)).finally(() => setCargando(false));
+    api.get('/reservas?estado=checkin').then(r => setReservas(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useAutoRefresh(cargar, 30000);

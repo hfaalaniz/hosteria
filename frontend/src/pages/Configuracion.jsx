@@ -754,14 +754,14 @@ export default function Configuracion() {
       api.get('/habitaciones'),
     ]).then(([c, t, h]) => {
       setConfig(c.data);
-      setTipos(t.data);
-      setHabitaciones(h.data);
+      setTipos(Array.isArray(t.data) ? t.data : []);
+      setHabitaciones(Array.isArray(h.data) ? h.data : []);
     }).finally(() => setCargando(false));
   }, []);
 
   async function cargarTipos() {
     const r = await api.get('/tipos-habitacion');
-    setTipos(r.data);
+    setTipos(Array.isArray(r.data) ? r.data : []);
   }
 
   async function guardarTipo(form) {

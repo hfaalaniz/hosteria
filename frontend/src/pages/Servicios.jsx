@@ -58,7 +58,7 @@ export default function Servicios() {
   const cargar = () => {
     setCargando(true);
     const q = categoriaFiltro ? `?categoria=${categoriaFiltro}` : '';
-    api.get(`/servicios${q}`).then(r => setServicios(r.data)).finally(() => setCargando(false));
+    api.get(`/servicios${q}`).then(r => setServicios(Array.isArray(r.data) ? r.data : [])).finally(() => setCargando(false));
   };
 
   useEffect(() => { cargar(); }, [categoriaFiltro]);
