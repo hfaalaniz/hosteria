@@ -1,0 +1,193 @@
+{
+  "app_name": "Hostel Management",
+  "nav": {
+    "dashboard": "Dashboard",
+    "habitaciones": "Rooms",
+    "reservas": "Bookings",
+    "huespedes": "Guests",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "facturacion": "Billing",
+    "servicios": "Services",
+    "mantenimiento": "Maintenance",
+    "configuracion": "Settings"
+  },
+  "common": {
+    "guardar": "Save",
+    "cancelar": "Cancel",
+    "eliminar": "Delete",
+    "editar": "Edit",
+    "nuevo": "New",
+    "buscar": "Search",
+    "cargando": "Loading...",
+    "confirmar": "Confirm",
+    "acciones": "Actions",
+    "ver": "View",
+    "estado": "Status",
+    "fecha": "Date",
+    "nombre": "Name",
+    "email": "Email",
+    "telefono": "Phone",
+    "notas": "Notes",
+    "total": "Total",
+    "precio": "Price",
+    "si": "Yes",
+    "no": "No",
+    "todos": "All",
+    "ninguno": "None",
+    "anterior": "Previous",
+    "siguiente": "Next",
+    "cerrar": "Close",
+    "agregar": "Add",
+    "de": "of"
+  },
+  "auth": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "email": "Email address",
+    "password": "Password",
+    "bienvenido": "Welcome to the management system"
+  },
+  "dashboard": {
+    "titulo": "Dashboard",
+    "ocupacion": "Current occupancy",
+    "disponibles": "Available",
+    "ocupadas": "Occupied",
+    "limpieza": "Cleaning",
+    "mantenimiento": "Maintenance",
+    "checkins_hoy": "Today's check-ins",
+    "checkouts_hoy": "Today's check-outs",
+    "en_casa": "Guests in house",
+    "ingresos_hoy": "Today's revenue",
+    "ingresos_mes": "Monthly revenue",
+    "proximas_llegadas": "Upcoming arrivals",
+    "proximas_salidas": "Upcoming departures",
+    "ingresos_ultimos_30": "Revenue last 30 days",
+    "ocupacion_por_tipo": "Occupancy by room type",
+    "mantenimiento_pendiente": "Pending maintenance"
+  },
+  "habitaciones": {
+    "titulo": "Rooms",
+    "numero": "Number",
+    "piso": "Floor",
+    "tipo": "Type",
+    "estado": "Status",
+    "capacidad": "Capacity",
+    "precio_base": "Base price",
+    "precio_fin_semana": "Weekend price",
+    "amenidades": "Amenities",
+    "nueva": "New room",
+    "estados": {
+      "disponible": "Available",
+      "ocupada": "Occupied",
+      "limpieza": "Cleaning",
+      "mantenimiento": "Maintenance"
+    }
+  },
+  "reservas": {
+    "titulo": "Bookings",
+    "codigo": "Code",
+    "huesped": "Guest",
+    "habitacion": "Room",
+    "entrada": "Check-in",
+    "salida": "Check-out",
+    "noches": "Nights",
+    "adultos": "Adults",
+    "ninos": "Children",
+    "origen": "Source",
+    "nueva": "New booking",
+    "estados": {
+      "pendiente": "Pending",
+      "confirmada": "Confirmed",
+      "checkin": "Checked in",
+      "checkout": "Checked out",
+      "cancelada": "Cancelled",
+      "noshow": "No show"
+    },
+    "origenes": {
+      "directo": "Direct",
+      "web": "Web",
+      "telefono": "Phone",
+      "booking": "Booking",
+      "airbnb": "Airbnb"
+    }
+  },
+  "huespedes": {
+    "titulo": "Guests",
+    "nombre": "First name",
+    "apellido": "Last name",
+    "documento": "ID document",
+    "nacionalidad": "Nationality",
+    "nuevo": "New guest",
+    "historial": "Booking history"
+  },
+  "checkin": {
+    "titulo": "Check-in",
+    "confirmar": "Confirm check-in",
+    "instrucciones": "Verify guest document before confirming"
+  },
+  "checkout": {
+    "titulo": "Check-out",
+    "confirmar": "Confirm check-out",
+    "generar_factura": "Generate invoice"
+  },
+  "facturacion": {
+    "titulo": "Billing",
+    "numero": "Invoice #",
+    "metodo_pago": "Payment method",
+    "subtotal": "Subtotal",
+    "impuestos": "Taxes",
+    "descuento": "Discount",
+    "total": "Total",
+    "emitida": "Issued",
+    "estados": {
+      "pendiente": "Pending",
+      "pagada": "Paid",
+      "anulada": "Voided"
+    },
+    "metodos": {
+      "efectivo": "Cash",
+      "tarjeta": "Card",
+      "transferencia": "Transfer"
+    }
+  },
+  "servicios": {
+    "titulo": "Services",
+    "categorias": {
+      "desayuno": "Breakfast",
+      "almuerzo": "Lunch",
+      "cena": "Dinner",
+      "lavanderia": "Laundry",
+      "transporte": "Transport",
+      "otro": "Other"
+    }
+  },
+  "mantenimiento": {
+    "titulo": "Maintenance",
+    "descripcion": "Problem description",
+    "prioridad": "Priority",
+    "reportado": "Reported",
+    "resuelto": "Mark as resolved",
+    "prioridades": {
+      "baja": "Low",
+      "media": "Medium",
+      "alta": "High"
+    },
+    "estados": {
+      "pendiente": "Pending",
+      "en_proceso": "In progress",
+      "resuelto": "Resolved"
+    }
+  },
+  "configuracion": {
+    "titulo": "Settings",
+    "nombre_hosteria": "Property name",
+    "direccion": "Address",
+    "telefono": "Phone",
+    "email": "Contact email",
+    "moneda": "Currency",
+    "impuesto": "Tax (%)",
+    "hora_checkin": "Check-in time",
+    "hora_checkout": "Check-out time"
+  }
+}

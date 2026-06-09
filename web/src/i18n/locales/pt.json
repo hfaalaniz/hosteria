@@ -1,0 +1,74 @@
+{
+  "nav": { "inicio": "Início", "habitaciones": "Quartos", "reservar": "Reservar", "contacto": "Contato", "mi_reserva": "Minha reserva" },
+  "hero": {
+    "titulo": "Seu lar longe de casa",
+    "subtitulo": "Desfrute do calor e conforto da nossa pousada familiar",
+    "btn_reservar": "Reservar agora",
+    "btn_habitaciones": "Ver quartos"
+  },
+  "buscar": {
+    "titulo": "Verificar disponibilidade",
+    "entrada": "Data de entrada",
+    "salida": "Data de saída",
+    "adultos": "Adultos",
+    "ninos": "Crianças",
+    "buscar": "Pesquisar"
+  },
+  "habitaciones": {
+    "titulo": "Nossos quartos",
+    "subtitulo": "Cada quarto pensado para o seu conforto",
+    "por_noche": "/ noite",
+    "capacidad": "Capacidade",
+    "personas": "pessoas",
+    "reservar": "Reservar",
+    "sin_resultados": "Sem quartos disponíveis para as datas selecionadas",
+    "disponibles": "quartos disponíveis"
+  },
+  "formulario": {
+    "titulo": "Finalizar reserva",
+    "datos_personales": "Seus dados",
+    "nombre": "Nome *",
+    "apellido": "Sobrenome *",
+    "email": "Email *",
+    "telefono": "Telefone",
+    "nacionalidad": "Nacionalidade",
+    "documento_tipo": "Tipo de documento",
+    "documento_numero": "N° do documento",
+    "confirmar": "Confirmar reserva",
+    "cancelar": "Cancelar",
+    "resumen": "Resumo da reserva",
+    "noches": "noites",
+    "total": "Total estimado"
+  },
+  "confirmacion": {
+    "titulo": "Reserva recebida!",
+    "mensaje": "Obrigado por escolher nossa pousada. Você receberá uma confirmação em breve.",
+    "codigo": "Seu código de reserva",
+    "guardar": "Guarde este código para consultar o status da sua reserva.",
+    "volver": "Voltar ao início"
+  },
+  "consulta": {
+    "titulo": "Consultar minha reserva",
+    "placeholder": "Insira seu código (ex: WEB-ABC123)",
+    "buscar": "Pesquisar",
+    "no_encontrada": "Nenhuma reserva encontrada com esse código",
+    "estado": "Status da sua reserva"
+  },
+  "estados": {
+    "pendiente": "Aguardando confirmação",
+    "confirmada": "Confirmada",
+    "checkin": "Check-in realizado",
+    "checkout": "Check-out realizado",
+    "cancelada": "Cancelada"
+  },
+  "footer": { "derechos": "Todos os direitos reservados", "contacto": "Contato" },
+  "nosotros": {
+    "titulo": "Por que nos escolher?",
+    "familiar": "Atenção familiar",
+    "familiar_desc": "Tratamento personalizado como em casa",
+    "ubicacion": "Excelente localização",
+    "ubicacion_desc": "No coração da cidade",
+    "servicios": "Serviços incluídos",
+    "servicios_desc": "Wifi, café da manhã e mais"
+  }
+}

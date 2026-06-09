@@ -1,0 +1,193 @@
+{
+  "app_name": "Gestion Hôtellerie",
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "habitaciones": "Chambres",
+    "reservas": "Réservations",
+    "huespedes": "Clients",
+    "checkin": "Arrivée",
+    "checkout": "Départ",
+    "facturacion": "Facturation",
+    "servicios": "Services",
+    "mantenimiento": "Maintenance",
+    "configuracion": "Paramètres"
+  },
+  "common": {
+    "guardar": "Enregistrer",
+    "cancelar": "Annuler",
+    "eliminar": "Supprimer",
+    "editar": "Modifier",
+    "nuevo": "Nouveau",
+    "buscar": "Rechercher",
+    "cargando": "Chargement...",
+    "confirmar": "Confirmer",
+    "acciones": "Actions",
+    "ver": "Voir",
+    "estado": "Statut",
+    "fecha": "Date",
+    "nombre": "Nom",
+    "email": "Email",
+    "telefono": "Téléphone",
+    "notas": "Notes",
+    "total": "Total",
+    "precio": "Prix",
+    "si": "Oui",
+    "no": "Non",
+    "todos": "Tous",
+    "ninguno": "Aucun",
+    "anterior": "Précédent",
+    "siguiente": "Suivant",
+    "cerrar": "Fermer",
+    "agregar": "Ajouter",
+    "de": "de"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "bienvenido": "Bienvenue dans le système de gestion"
+  },
+  "dashboard": {
+    "titulo": "Tableau de bord",
+    "ocupacion": "Occupation actuelle",
+    "disponibles": "Disponibles",
+    "ocupadas": "Occupées",
+    "limpieza": "Nettoyage",
+    "mantenimiento": "Maintenance",
+    "checkins_hoy": "Arrivées aujourd'hui",
+    "checkouts_hoy": "Départs aujourd'hui",
+    "en_casa": "Clients présents",
+    "ingresos_hoy": "Revenus aujourd'hui",
+    "ingresos_mes": "Revenus du mois",
+    "proximas_llegadas": "Prochaines arrivées",
+    "proximas_salidas": "Prochains départs",
+    "ingresos_ultimos_30": "Revenus 30 derniers jours",
+    "ocupacion_por_tipo": "Occupation par type",
+    "mantenimiento_pendiente": "Maintenance en attente"
+  },
+  "habitaciones": {
+    "titulo": "Chambres",
+    "numero": "Numéro",
+    "piso": "Étage",
+    "tipo": "Type",
+    "estado": "Statut",
+    "capacidad": "Capacité",
+    "precio_base": "Prix de base",
+    "precio_fin_semana": "Prix week-end",
+    "amenidades": "Équipements",
+    "nueva": "Nouvelle chambre",
+    "estados": {
+      "disponible": "Disponible",
+      "ocupada": "Occupée",
+      "limpieza": "Nettoyage",
+      "mantenimiento": "Maintenance"
+    }
+  },
+  "reservas": {
+    "titulo": "Réservations",
+    "codigo": "Code",
+    "huesped": "Client",
+    "habitacion": "Chambre",
+    "entrada": "Arrivée",
+    "salida": "Départ",
+    "noches": "Nuits",
+    "adultos": "Adultes",
+    "ninos": "Enfants",
+    "origen": "Source",
+    "nueva": "Nouvelle réservation",
+    "estados": {
+      "pendiente": "En attente",
+      "confirmada": "Confirmée",
+      "checkin": "Arrivée effectuée",
+      "checkout": "Départ effectué",
+      "cancelada": "Annulée",
+      "noshow": "Non présenté"
+    },
+    "origenes": {
+      "directo": "Direct",
+      "web": "Web",
+      "telefono": "Téléphone",
+      "booking": "Booking",
+      "airbnb": "Airbnb"
+    }
+  },
+  "huespedes": {
+    "titulo": "Clients",
+    "nombre": "Prénom",
+    "apellido": "Nom",
+    "documento": "Pièce d'identité",
+    "nacionalidad": "Nationalité",
+    "nuevo": "Nouveau client",
+    "historial": "Historique des réservations"
+  },
+  "checkin": {
+    "titulo": "Arrivée",
+    "confirmar": "Confirmer l'arrivée",
+    "instrucciones": "Vérifier le document du client avant de confirmer"
+  },
+  "checkout": {
+    "titulo": "Départ",
+    "confirmar": "Confirmer le départ",
+    "generar_factura": "Générer la facture"
+  },
+  "facturacion": {
+    "titulo": "Facturation",
+    "numero": "N° Facture",
+    "metodo_pago": "Mode de paiement",
+    "subtotal": "Sous-total",
+    "impuestos": "Taxes",
+    "descuento": "Remise",
+    "total": "Total",
+    "emitida": "Émise le",
+    "estados": {
+      "pendiente": "En attente",
+      "pagada": "Payée",
+      "anulada": "Annulée"
+    },
+    "metodos": {
+      "efectivo": "Espèces",
+      "tarjeta": "Carte",
+      "transferencia": "Virement"
+    }
+  },
+  "servicios": {
+    "titulo": "Services",
+    "categorias": {
+      "desayuno": "Petit-déjeuner",
+      "almuerzo": "Déjeuner",
+      "cena": "Dîner",
+      "lavanderia": "Blanchisserie",
+      "transporte": "Transport",
+      "otro": "Autre"
+    }
+  },
+  "mantenimiento": {
+    "titulo": "Maintenance",
+    "descripcion": "Description du problème",
+    "prioridad": "Priorité",
+    "reportado": "Signalé",
+    "resuelto": "Marquer comme résolu",
+    "prioridades": {
+      "baja": "Basse",
+      "media": "Moyenne",
+      "alta": "Haute"
+    },
+    "estados": {
+      "pendiente": "En attente",
+      "en_proceso": "En cours",
+      "resuelto": "Résolu"
+    }
+  },
+  "configuracion": {
+    "titulo": "Paramètres",
+    "nombre_hosteria": "Nom de l'établissement",
+    "direccion": "Adresse",
+    "telefono": "Téléphone",
+    "email": "Email de contact",
+    "moneda": "Devise",
+    "impuesto": "Taxe (%)",
+    "hora_checkin": "Heure d'arrivée",
+    "hora_checkout": "Heure de départ"
+  }
+}

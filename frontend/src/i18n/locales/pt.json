@@ -1,0 +1,193 @@
+{
+  "app_name": "Gestão de Pousada",
+  "nav": {
+    "dashboard": "Painel",
+    "habitaciones": "Quartos",
+    "reservas": "Reservas",
+    "huespedes": "Hóspedes",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "facturacion": "Faturamento",
+    "servicios": "Serviços",
+    "mantenimiento": "Manutenção",
+    "configuracion": "Configurações"
+  },
+  "common": {
+    "guardar": "Salvar",
+    "cancelar": "Cancelar",
+    "eliminar": "Excluir",
+    "editar": "Editar",
+    "nuevo": "Novo",
+    "buscar": "Buscar",
+    "cargando": "Carregando...",
+    "confirmar": "Confirmar",
+    "acciones": "Ações",
+    "ver": "Ver",
+    "estado": "Status",
+    "fecha": "Data",
+    "nombre": "Nome",
+    "email": "Email",
+    "telefono": "Telefone",
+    "notas": "Notas",
+    "total": "Total",
+    "precio": "Preço",
+    "si": "Sim",
+    "no": "Não",
+    "todos": "Todos",
+    "ninguno": "Nenhum",
+    "anterior": "Anterior",
+    "siguiente": "Próximo",
+    "cerrar": "Fechar",
+    "agregar": "Adicionar",
+    "de": "de"
+  },
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "email": "Endereço de email",
+    "password": "Senha",
+    "bienvenido": "Bem-vindo ao sistema de gestão"
+  },
+  "dashboard": {
+    "titulo": "Painel",
+    "ocupacion": "Ocupação atual",
+    "disponibles": "Disponíveis",
+    "ocupadas": "Ocupados",
+    "limpieza": "Limpeza",
+    "mantenimiento": "Manutenção",
+    "checkins_hoy": "Check-ins hoje",
+    "checkouts_hoy": "Check-outs hoje",
+    "en_casa": "Hóspedes presentes",
+    "ingresos_hoy": "Receita hoje",
+    "ingresos_mes": "Receita do mês",
+    "proximas_llegadas": "Próximas chegadas",
+    "proximas_salidas": "Próximas saídas",
+    "ingresos_ultimos_30": "Receita últimos 30 dias",
+    "ocupacion_por_tipo": "Ocupação por tipo",
+    "mantenimiento_pendiente": "Manutenção pendente"
+  },
+  "habitaciones": {
+    "titulo": "Quartos",
+    "numero": "Número",
+    "piso": "Andar",
+    "tipo": "Tipo",
+    "estado": "Status",
+    "capacidad": "Capacidade",
+    "precio_base": "Preço base",
+    "precio_fin_semana": "Preço fim de semana",
+    "amenidades": "Comodidades",
+    "nueva": "Novo quarto",
+    "estados": {
+      "disponible": "Disponível",
+      "ocupada": "Ocupado",
+      "limpieza": "Limpeza",
+      "mantenimiento": "Manutenção"
+    }
+  },
+  "reservas": {
+    "titulo": "Reservas",
+    "codigo": "Código",
+    "huesped": "Hóspede",
+    "habitacion": "Quarto",
+    "entrada": "Entrada",
+    "salida": "Saída",
+    "noches": "Noites",
+    "adultos": "Adultos",
+    "ninos": "Crianças",
+    "origen": "Origem",
+    "nueva": "Nova reserva",
+    "estados": {
+      "pendiente": "Pendente",
+      "confirmada": "Confirmada",
+      "checkin": "Check-in feito",
+      "checkout": "Check-out feito",
+      "cancelada": "Cancelada",
+      "noshow": "Não compareceu"
+    },
+    "origenes": {
+      "directo": "Direto",
+      "web": "Web",
+      "telefono": "Telefone",
+      "booking": "Booking",
+      "airbnb": "Airbnb"
+    }
+  },
+  "huespedes": {
+    "titulo": "Hóspedes",
+    "nombre": "Nome",
+    "apellido": "Sobrenome",
+    "documento": "Documento",
+    "nacionalidad": "Nacionalidade",
+    "nuevo": "Novo hóspede",
+    "historial": "Histórico de reservas"
+  },
+  "checkin": {
+    "titulo": "Check-in",
+    "confirmar": "Confirmar check-in",
+    "instrucciones": "Verificar documento do hóspede antes de confirmar"
+  },
+  "checkout": {
+    "titulo": "Check-out",
+    "confirmar": "Confirmar check-out",
+    "generar_factura": "Gerar fatura"
+  },
+  "facturacion": {
+    "titulo": "Faturamento",
+    "numero": "N° Fatura",
+    "metodo_pago": "Forma de pagamento",
+    "subtotal": "Subtotal",
+    "impuestos": "Impostos",
+    "descuento": "Desconto",
+    "total": "Total",
+    "emitida": "Emitida em",
+    "estados": {
+      "pendiente": "Pendente",
+      "pagada": "Paga",
+      "anulada": "Anulada"
+    },
+    "metodos": {
+      "efectivo": "Dinheiro",
+      "tarjeta": "Cartão",
+      "transferencia": "Transferência"
+    }
+  },
+  "servicios": {
+    "titulo": "Serviços",
+    "categorias": {
+      "desayuno": "Café da manhã",
+      "almuerzo": "Almoço",
+      "cena": "Jantar",
+      "lavanderia": "Lavanderia",
+      "transporte": "Transporte",
+      "otro": "Outro"
+    }
+  },
+  "mantenimiento": {
+    "titulo": "Manutenção",
+    "descripcion": "Descrição do problema",
+    "prioridad": "Prioridade",
+    "reportado": "Reportado",
+    "resuelto": "Marcar como resolvido",
+    "prioridades": {
+      "baja": "Baixa",
+      "media": "Média",
+      "alta": "Alta"
+    },
+    "estados": {
+      "pendiente": "Pendente",
+      "en_proceso": "Em andamento",
+      "resuelto": "Resolvido"
+    }
+  },
+  "configuracion": {
+    "titulo": "Configurações",
+    "nombre_hosteria": "Nome da pousada",
+    "direccion": "Endereço",
+    "telefono": "Telefone",
+    "email": "Email de contato",
+    "moneda": "Moeda",
+    "impuesto": "Imposto (%)",
+    "hora_checkin": "Horário de check-in",
+    "hora_checkout": "Horário de check-out"
+  }
+}

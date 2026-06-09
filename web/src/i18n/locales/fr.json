@@ -1,0 +1,74 @@
+{
+  "nav": { "inicio": "Accueil", "habitaciones": "Chambres", "reservar": "Réserver", "contacto": "Contact", "mi_reserva": "Ma réservation" },
+  "hero": {
+    "titulo": "Votre maison loin de chez vous",
+    "subtitulo": "Profitez de la chaleur et du confort de notre hôtellerie familiale",
+    "btn_reservar": "Réserver maintenant",
+    "btn_habitaciones": "Voir les chambres"
+  },
+  "buscar": {
+    "titulo": "Vérifier la disponibilité",
+    "entrada": "Date d'arrivée",
+    "salida": "Date de départ",
+    "adultos": "Adultes",
+    "ninos": "Enfants",
+    "buscar": "Rechercher"
+  },
+  "habitaciones": {
+    "titulo": "Nos chambres",
+    "subtitulo": "Chaque chambre conçue pour votre confort",
+    "por_noche": "/ nuit",
+    "capacidad": "Capacité",
+    "personas": "personnes",
+    "reservar": "Réserver",
+    "sin_resultados": "Pas de chambres disponibles pour les dates sélectionnées",
+    "disponibles": "chambres disponibles"
+  },
+  "formulario": {
+    "titulo": "Finaliser la réservation",
+    "datos_personales": "Vos coordonnées",
+    "nombre": "Prénom *",
+    "apellido": "Nom *",
+    "email": "Email *",
+    "telefono": "Téléphone",
+    "nacionalidad": "Nationalité",
+    "documento_tipo": "Type de document",
+    "documento_numero": "N° de document",
+    "confirmar": "Confirmer la réservation",
+    "cancelar": "Annuler",
+    "resumen": "Récapitulatif",
+    "noches": "nuits",
+    "total": "Total estimé"
+  },
+  "confirmacion": {
+    "titulo": "Réservation reçue !",
+    "mensaje": "Merci de choisir notre établissement. Vous recevrez une confirmation bientôt.",
+    "codigo": "Votre code de réservation",
+    "guardar": "Conservez ce code pour consulter le statut de votre réservation.",
+    "volver": "Retour à l'accueil"
+  },
+  "consulta": {
+    "titulo": "Consulter ma réservation",
+    "placeholder": "Entrez votre code (ex: WEB-ABC123)",
+    "buscar": "Rechercher",
+    "no_encontrada": "Aucune réservation trouvée avec ce code",
+    "estado": "Statut de votre réservation"
+  },
+  "estados": {
+    "pendiente": "En attente de confirmation",
+    "confirmada": "Confirmée",
+    "checkin": "Arrivée effectuée",
+    "checkout": "Départ effectué",
+    "cancelada": "Annulée"
+  },
+  "footer": { "derechos": "Tous droits réservés", "contacto": "Contact" },
+  "nosotros": {
+    "titulo": "Pourquoi nous choisir ?",
+    "familiar": "Accueil familial",
+    "familiar_desc": "Attention personnalisée comme à la maison",
+    "ubicacion": "Excellent emplacement",
+    "ubicacion_desc": "Au cœur de la ville",
+    "servicios": "Services inclus",
+    "servicios_desc": "Wifi, petit-déjeuner et plus"
+  }
+}

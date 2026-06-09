@@ -1,0 +1,88 @@
+{
+  "nav": { "inicio": "Home", "habitaciones": "Rooms", "reservar": "Book", "contacto": "Contact", "mi_reserva": "My booking" },
+  "hero": {
+    "titulo": "Your home away from home",
+    "subtitulo": "Enjoy the warmth and comfort of our family hostel",
+    "btn_reservar": "Book now",
+    "btn_habitaciones": "See rooms"
+  },
+  "buscar": {
+    "titulo": "Check availability",
+    "entrada": "Check-in date",
+    "salida": "Check-out date",
+    "adultos": "Adults",
+    "ninos": "Children",
+    "buscar": "Search availability"
+  },
+  "habitaciones": {
+    "titulo": "Our rooms",
+    "subtitulo": "Each room designed for your comfort",
+    "por_noche": "/ night",
+    "capacidad": "Capacity",
+    "personas": "people",
+    "reservar": "Book this room",
+    "ver_detalle": "View details",
+    "sin_resultados": "No rooms available for the selected dates",
+    "disponibles": "rooms available",
+    "todas": "All our rooms",
+    "bano_privado": "Private bathroom",
+    "vista": "View of",
+    "metros": "m²",
+    "camas": "Beds",
+    "disponible": "Available",
+    "no_disponible": "Not available",
+    "hab": "Room",
+    "piso": "Floor",
+    "desde": "from"
+  },
+  "formulario": {
+    "titulo": "Complete your booking",
+    "datos_personales": "Your details",
+    "nombre": "First name *",
+    "apellido": "Last name *",
+    "email": "Email *",
+    "telefono": "Phone",
+    "nacionalidad": "Nationality",
+    "documento_tipo": "Document type",
+    "documento_numero": "Document number",
+    "confirmar": "Confirm booking",
+    "cancelar": "Cancel",
+    "resumen": "Booking summary",
+    "noches": "nights",
+    "total": "Estimated total"
+  },
+  "confirmacion": {
+    "titulo": "Booking received!",
+    "mensaje": "Thank you for choosing our hostel. You will receive a confirmation soon.",
+    "codigo": "Your booking code",
+    "guardar": "Save this code to check the status of your booking.",
+    "volver": "Back to home"
+  },
+  "consulta": {
+    "titulo": "Check my booking",
+    "placeholder": "Enter your code (e.g. WEB-ABC123)",
+    "buscar": "Search",
+    "no_encontrada": "No booking found with that code",
+    "estado": "Your booking status"
+  },
+  "estados": {
+    "pendiente": "Pending confirmation",
+    "confirmada": "Confirmed",
+    "checkin": "Checked in",
+    "checkout": "Checked out",
+    "cancelada": "Cancelled"
+  },
+  "footer": {
+    "derechos": "All rights reserved",
+    "contacto": "Contact"
+  },
+  "nosotros": {
+    "titulo": "Why choose us?",
+    "familiar": "Family care",
+    "familiar_desc": "Personalized attention like home",
+    "ubicacion": "Great location",
+    "ubicacion_desc": "In the heart of the city",
+    "servicios": "Included services",
+    "servicios_desc": "Wifi, breakfast and more"
+  }
+}

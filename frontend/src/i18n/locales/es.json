@@ -1,0 +1,193 @@
+{
+  "app_name": "Gestión Hostería",
+  "nav": {
+    "dashboard": "Dashboard",
+    "habitaciones": "Habitaciones",
+    "reservas": "Reservas",
+    "huespedes": "Huéspedes",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "facturacion": "Facturación",
+    "servicios": "Servicios",
+    "mantenimiento": "Mantenimiento",
+    "configuracion": "Configuración"
+  },
+  "common": {
+    "guardar": "Guardar",
+    "cancelar": "Cancelar",
+    "eliminar": "Eliminar",
+    "editar": "Editar",
+    "nuevo": "Nuevo",
+    "buscar": "Buscar",
+    "cargando": "Cargando...",
+    "confirmar": "Confirmar",
+    "acciones": "Acciones",
+    "ver": "Ver",
+    "estado": "Estado",
+    "fecha": "Fecha",
+    "nombre": "Nombre",
+    "email": "Email",
+    "telefono": "Teléfono",
+    "notas": "Notas",
+    "total": "Total",
+    "precio": "Precio",
+    "si": "Sí",
+    "no": "No",
+    "todos": "Todos",
+    "ninguno": "Ninguno",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente",
+    "cerrar": "Cerrar",
+    "agregar": "Agregar",
+    "de": "de"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "bienvenido": "Bienvenido al sistema de gestión"
+  },
+  "dashboard": {
+    "titulo": "Dashboard",
+    "ocupacion": "Ocupación actual",
+    "disponibles": "Disponibles",
+    "ocupadas": "Ocupadas",
+    "limpieza": "En limpieza",
+    "mantenimiento": "Mantenimiento",
+    "checkins_hoy": "Check-ins hoy",
+    "checkouts_hoy": "Check-outs hoy",
+    "en_casa": "Huéspedes en casa",
+    "ingresos_hoy": "Ingresos hoy",
+    "ingresos_mes": "Ingresos del mes",
+    "proximas_llegadas": "Próximas llegadas",
+    "proximas_salidas": "Próximas salidas",
+    "ingresos_ultimos_30": "Ingresos últimos 30 días",
+    "ocupacion_por_tipo": "Ocupación por tipo",
+    "mantenimiento_pendiente": "Mantenimiento pendiente"
+  },
+  "habitaciones": {
+    "titulo": "Habitaciones",
+    "numero": "Número",
+    "piso": "Piso",
+    "tipo": "Tipo",
+    "estado": "Estado",
+    "capacidad": "Capacidad",
+    "precio_base": "Precio base",
+    "precio_fin_semana": "Precio fin de semana",
+    "amenidades": "Amenidades",
+    "nueva": "Nueva habitación",
+    "estados": {
+      "disponible": "Disponible",
+      "ocupada": "Ocupada",
+      "limpieza": "Limpieza",
+      "mantenimiento": "Mantenimiento"
+    }
+  },
+  "reservas": {
+    "titulo": "Reservas",
+    "codigo": "Código",
+    "huesped": "Huésped",
+    "habitacion": "Habitación",
+    "entrada": "Entrada",
+    "salida": "Salida",
+    "noches": "Noches",
+    "adultos": "Adultos",
+    "ninos": "Niños",
+    "origen": "Origen",
+    "nueva": "Nueva reserva",
+    "estados": {
+      "pendiente": "Pendiente",
+      "confirmada": "Confirmada",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "cancelada": "Cancelada",
+      "noshow": "No show"
+    },
+    "origenes": {
+      "directo": "Directo",
+      "web": "Web",
+      "telefono": "Teléfono",
+      "booking": "Booking",
+      "airbnb": "Airbnb"
+    }
+  },
+  "huespedes": {
+    "titulo": "Huéspedes",
+    "nombre": "Nombre",
+    "apellido": "Apellido",
+    "documento": "Documento",
+    "nacionalidad": "Nacionalidad",
+    "nuevo": "Nuevo huésped",
+    "historial": "Historial de reservas"
+  },
+  "checkin": {
+    "titulo": "Check-in",
+    "confirmar": "Confirmar check-in",
+    "instrucciones": "Verificar documento del huésped antes de confirmar"
+  },
+  "checkout": {
+    "titulo": "Check-out",
+    "confirmar": "Confirmar check-out",
+    "generar_factura": "Generar factura"
+  },
+  "facturacion": {
+    "titulo": "Facturación",
+    "numero": "N° Factura",
+    "metodo_pago": "Método de pago",
+    "subtotal": "Subtotal",
+    "impuestos": "Impuestos",
+    "descuento": "Descuento",
+    "total": "Total",
+    "emitida": "Emitida",
+    "estados": {
+      "pendiente": "Pendiente",
+      "pagada": "Pagada",
+      "anulada": "Anulada"
+    },
+    "metodos": {
+      "efectivo": "Efectivo",
+      "tarjeta": "Tarjeta",
+      "transferencia": "Transferencia"
+    }
+  },
+  "servicios": {
+    "titulo": "Servicios",
+    "categorias": {
+      "desayuno": "Desayuno",
+      "almuerzo": "Almuerzo",
+      "cena": "Cena",
+      "lavanderia": "Lavandería",
+      "transporte": "Transporte",
+      "otro": "Otro"
+    }
+  },
+  "mantenimiento": {
+    "titulo": "Mantenimiento",
+    "descripcion": "Descripción del problema",
+    "prioridad": "Prioridad",
+    "reportado": "Reportado",
+    "resuelto": "Marcar resuelto",
+    "prioridades": {
+      "baja": "Baja",
+      "media": "Media",
+      "alta": "Alta"
+    },
+    "estados": {
+      "pendiente": "Pendiente",
+      "en_proceso": "En proceso",
+      "resuelto": "Resuelto"
+    }
+  },
+  "configuracion": {
+    "titulo": "Configuración",
+    "nombre_hosteria": "Nombre de la hostería",
+    "direccion": "Dirección",
+    "telefono": "Teléfono",
+    "email": "Email de contacto",
+    "moneda": "Moneda",
+    "impuesto": "Impuesto (%)",
+    "hora_checkin": "Hora de check-in",
+    "hora_checkout": "Hora de check-out"
+  }
+}

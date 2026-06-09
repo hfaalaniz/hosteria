@@ -1,0 +1,10 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hostería ElectroNet//Hosteria System//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Hab. 101 - Individual
+X-WR-CALDESC:Disponibilidad Hostería ElectroNet - Habitacion 101
+X-WR-TIMEZONE:America/Argentina/Buenos_Aires
+
+END:VCALENDAR

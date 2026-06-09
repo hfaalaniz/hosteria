@@ -1,0 +1,74 @@
+{
+  "nav": { "inicio": "首页", "habitaciones": "客房", "reservar": "预订", "contacto": "联系", "mi_reserva": "我的预订" },
+  "hero": {
+    "titulo": "您在外的温馨之家",
+    "subtitulo": "享受我们家庭旅馆的温暖与舒适",
+    "btn_reservar": "立即预订",
+    "btn_habitaciones": "查看客房"
+  },
+  "buscar": {
+    "titulo": "查询可用房间",
+    "entrada": "入住日期",
+    "salida": "退房日期",
+    "adultos": "成人",
+    "ninos": "儿童",
+    "buscar": "搜索"
+  },
+  "habitaciones": {
+    "titulo": "我们的客房",
+    "subtitulo": "每间客房都为您的舒适而设计",
+    "por_noche": "/ 晚",
+    "capacidad": "容量",
+    "personas": "人",
+    "reservar": "预订",
+    "sin_resultados": "所选日期没有可用房间",
+    "disponibles": "间客房可用"
+  },
+  "formulario": {
+    "titulo": "完成预订",
+    "datos_personales": "您的信息",
+    "nombre": "名 *",
+    "apellido": "姓 *",
+    "email": "邮箱 *",
+    "telefono": "电话",
+    "nacionalidad": "国籍",
+    "documento_tipo": "证件类型",
+    "documento_numero": "证件号码",
+    "confirmar": "确认预订",
+    "cancelar": "取消",
+    "resumen": "预订摘要",
+    "noches": "晚",
+    "total": "预计总价"
+  },
+  "confirmacion": {
+    "titulo": "预订已收到！",
+    "mensaje": "感谢您选择我们的旅馆。您将很快收到确认。",
+    "codigo": "您的预订代码",
+    "guardar": "请保存此代码以查询您的预订状态。",
+    "volver": "返回首页"
+  },
+  "consulta": {
+    "titulo": "查询我的预订",
+    "placeholder": "输入您的代码（例如：WEB-ABC123）",
+    "buscar": "查询",
+    "no_encontrada": "未找到该代码对应的预订",
+    "estado": "您的预订状态"
+  },
+  "estados": {
+    "pendiente": "待确认",
+    "confirmada": "已确认",
+    "checkin": "已入住",
+    "checkout": "已退房",
+    "cancelada": "已取消"
+  },
+  "footer": { "derechos": "版权所有", "contacto": "联系我们" },
+  "nosotros": {
+    "titulo": "为什么选择我们？",
+    "familiar": "家庭式服务",
+    "familiar_desc": "像家一样的个性化关怀",
+    "ubicacion": "优越位置",
+    "ubicacion_desc": "坐落于市中心",
+    "servicios": "含服务",
+    "servicios_desc": "Wifi、早餐等更多"
+  }
+}

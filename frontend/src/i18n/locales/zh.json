@@ -1,0 +1,193 @@
+{
+  "app_name": "旅馆管理系统",
+  "nav": {
+    "dashboard": "仪表板",
+    "habitaciones": "客房",
+    "reservas": "预订",
+    "huespedes": "宾客",
+    "checkin": "入住",
+    "checkout": "退房",
+    "facturacion": "账单",
+    "servicios": "服务",
+    "mantenimiento": "维护",
+    "configuracion": "设置"
+  },
+  "common": {
+    "guardar": "保存",
+    "cancelar": "取消",
+    "eliminar": "删除",
+    "editar": "编辑",
+    "nuevo": "新建",
+    "buscar": "搜索",
+    "cargando": "加载中...",
+    "confirmar": "确认",
+    "acciones": "操作",
+    "ver": "查看",
+    "estado": "状态",
+    "fecha": "日期",
+    "nombre": "姓名",
+    "email": "邮箱",
+    "telefono": "电话",
+    "notas": "备注",
+    "total": "合计",
+    "precio": "价格",
+    "si": "是",
+    "no": "否",
+    "todos": "全部",
+    "ninguno": "无",
+    "anterior": "上一页",
+    "siguiente": "下一页",
+    "cerrar": "关闭",
+    "agregar": "添加",
+    "de": "/"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出",
+    "email": "邮箱地址",
+    "password": "密码",
+    "bienvenido": "欢迎使用管理系统"
+  },
+  "dashboard": {
+    "titulo": "仪表板",
+    "ocupacion": "当前入住率",
+    "disponibles": "可用",
+    "ocupadas": "已占用",
+    "limpieza": "清洁中",
+    "mantenimiento": "维护中",
+    "checkins_hoy": "今日入住",
+    "checkouts_hoy": "今日退房",
+    "en_casa": "在住宾客",
+    "ingresos_hoy": "今日收入",
+    "ingresos_mes": "本月收入",
+    "proximas_llegadas": "即将到来",
+    "proximas_salidas": "即将退房",
+    "ingresos_ultimos_30": "近30天收入",
+    "ocupacion_por_tipo": "各类型入住率",
+    "mantenimiento_pendiente": "待处理维护"
+  },
+  "habitaciones": {
+    "titulo": "客房",
+    "numero": "房间号",
+    "piso": "楼层",
+    "tipo": "类型",
+    "estado": "状态",
+    "capacidad": "容量",
+    "precio_base": "基础价格",
+    "precio_fin_semana": "周末价格",
+    "amenidades": "设施",
+    "nueva": "新建客房",
+    "estados": {
+      "disponible": "可用",
+      "ocupada": "已占用",
+      "limpieza": "清洁中",
+      "mantenimiento": "维护中"
+    }
+  },
+  "reservas": {
+    "titulo": "预订",
+    "codigo": "代码",
+    "huesped": "宾客",
+    "habitacion": "客房",
+    "entrada": "入住",
+    "salida": "退房",
+    "noches": "晚",
+    "adultos": "成人",
+    "ninos": "儿童",
+    "origen": "来源",
+    "nueva": "新建预订",
+    "estados": {
+      "pendiente": "待确认",
+      "confirmada": "已确认",
+      "checkin": "已入住",
+      "checkout": "已退房",
+      "cancelada": "已取消",
+      "noshow": "未到店"
+    },
+    "origenes": {
+      "directo": "直接",
+      "web": "网络",
+      "telefono": "电话",
+      "booking": "Booking",
+      "airbnb": "Airbnb"
+    }
+  },
+  "huespedes": {
+    "titulo": "宾客",
+    "nombre": "名",
+    "apellido": "姓",
+    "documento": "证件",
+    "nacionalidad": "国籍",
+    "nuevo": "新建宾客",
+    "historial": "预订历史"
+  },
+  "checkin": {
+    "titulo": "入住",
+    "confirmar": "确认入住",
+    "instrucciones": "确认前请核实宾客证件"
+  },
+  "checkout": {
+    "titulo": "退房",
+    "confirmar": "确认退房",
+    "generar_factura": "生成账单"
+  },
+  "facturacion": {
+    "titulo": "账单",
+    "numero": "账单号",
+    "metodo_pago": "付款方式",
+    "subtotal": "小计",
+    "impuestos": "税费",
+    "descuento": "折扣",
+    "total": "合计",
+    "emitida": "开具日期",
+    "estados": {
+      "pendiente": "待付",
+      "pagada": "已付",
+      "anulada": "已作废"
+    },
+    "metodos": {
+      "efectivo": "现金",
+      "tarjeta": "刷卡",
+      "transferencia": "转账"
+    }
+  },
+  "servicios": {
+    "titulo": "服务",
+    "categorias": {
+      "desayuno": "早餐",
+      "almuerzo": "午餐",
+      "cena": "晚餐",
+      "lavanderia": "洗衣",
+      "transporte": "交通",
+      "otro": "其他"
+    }
+  },
+  "mantenimiento": {
+    "titulo": "维护",
+    "descripcion": "问题描述",
+    "prioridad": "优先级",
+    "reportado": "报告时间",
+    "resuelto": "标记为已解决",
+    "prioridades": {
+      "baja": "低",
+      "media": "中",
+      "alta": "高"
+    },
+    "estados": {
+      "pendiente": "待处理",
+      "en_proceso": "处理中",
+      "resuelto": "已解决"
+    }
+  },
+  "configuracion": {
+    "titulo": "设置",
+    "nombre_hosteria": "旅馆名称",
+    "direccion": "地址",
+    "telefono": "电话",
+    "email": "联系邮箱",
+    "moneda": "货币",
+    "impuesto": "税率 (%)",
+    "hora_checkin": "入住时间",
+    "hora_checkout": "退房时间"
+  }
+}

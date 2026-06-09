@@ -1,0 +1,88 @@
+{
+  "nav": { "inicio": "Inicio", "habitaciones": "Habitaciones", "reservar": "Reservar", "contacto": "Contacto", "mi_reserva": "Mi reserva" },
+  "hero": {
+    "titulo": "Tu hogar lejos de casa",
+    "subtitulo": "Disfruta de la calidez y comodidad de nuestra hostería familiar",
+    "btn_reservar": "Reservar ahora",
+    "btn_habitaciones": "Ver habitaciones"
+  },
+  "buscar": {
+    "titulo": "Consultar disponibilidad",
+    "entrada": "Fecha de entrada",
+    "salida": "Fecha de salida",
+    "adultos": "Adultos",
+    "ninos": "Niños",
+    "buscar": "Buscar disponibilidad"
+  },
+  "habitaciones": {
+    "titulo": "Nuestras habitaciones",
+    "subtitulo": "Cada habitación pensada para tu comodidad",
+    "por_noche": "/ noche",
+    "capacidad": "Capacidad",
+    "personas": "personas",
+    "reservar": "Reservar esta habitación",
+    "ver_detalle": "Ver detalles",
+    "sin_resultados": "No hay habitaciones disponibles para las fechas seleccionadas",
+    "disponibles": "habitaciones disponibles",
+    "todas": "Todas nuestras habitaciones",
+    "bano_privado": "Baño privado",
+    "vista": "Vista al",
+    "metros": "m²",
+    "camas": "Camas",
+    "disponible": "Disponible",
+    "no_disponible": "No disponible",
+    "hab": "Hab.",
+    "piso": "Piso",
+    "desde": "desde"
+  },
+  "formulario": {
+    "titulo": "Completar reserva",
+    "datos_personales": "Tus datos",
+    "nombre": "Nombre *",
+    "apellido": "Apellido *",
+    "email": "Email *",
+    "telefono": "Teléfono",
+    "nacionalidad": "Nacionalidad",
+    "documento_tipo": "Tipo de documento",
+    "documento_numero": "N° de documento",
+    "confirmar": "Confirmar reserva",
+    "cancelar": "Cancelar",
+    "resumen": "Resumen de tu reserva",
+    "noches": "noches",
+    "total": "Total estimado"
+  },
+  "confirmacion": {
+    "titulo": "¡Reserva recibida!",
+    "mensaje": "Gracias por elegir nuestra hostería. Recibirás una confirmación pronto.",
+    "codigo": "Tu código de reserva",
+    "guardar": "Guarda este código para consultar el estado de tu reserva.",
+    "volver": "Volver al inicio"
+  },
+  "consulta": {
+    "titulo": "Consultar mi reserva",
+    "placeholder": "Ingresa tu código (ej: WEB-ABC123)",
+    "buscar": "Consultar",
+    "no_encontrada": "No se encontró ninguna reserva con ese código",
+    "estado": "Estado de tu reserva"
+  },
+  "estados": {
+    "pendiente": "Pendiente de confirmación",
+    "confirmada": "Confirmada",
+    "checkin": "En casa",
+    "checkout": "Check-out realizado",
+    "cancelada": "Cancelada"
+  },
+  "footer": {
+    "derechos": "Todos los derechos reservados",
+    "contacto": "Contacto"
+  },
+  "nosotros": {
+    "titulo": "¿Por qué elegirnos?",
+    "familiar": "Atención familiar",
+    "familiar_desc": "Trato personalizado como en casa",
+    "ubicacion": "Excelente ubicación",
+    "ubicacion_desc": "En el corazón de la ciudad",
+    "servicios": "Servicios incluidos",
+    "servicios_desc": "Wifi, desayuno y más"
+  }
+}
