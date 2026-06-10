@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useTenant } from '../context/TenantContext';
 
 const LANGS = [
   { code: 'es', label: 'ES' },
@@ -13,6 +14,9 @@ const LANGS = [
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
+  const { config } = useTenant();
+  const nombre = config.nombre_hosteria || 'Hostería';
+  const inicial = nombre[0].toUpperCase();
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -26,8 +30,8 @@ export default function Navbar() {
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold">H</div>
-          <span className="font-bold text-slate-800 text-lg">Hostería</span>
+          <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold">{inicial}</div>
+          <span className="font-bold text-slate-800 text-lg">{nombre}</span>
         </Link>
 
         {/* Desktop nav */}

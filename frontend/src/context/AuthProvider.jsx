@@ -4,12 +4,23 @@ import { AuthContext } from './AuthContext';
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
+  const [tenant, setTenant] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   const limpiarSesion = useCallback(() => {
     localStorage.removeItem('token');
     setUsuario(null);
+    setTenant(null);
   }, []);
+
+  async function cargarTenant() {
+    try {
+      const res = await api.get('/tenants/mi-tenant');
+      setTenant(res.data);
+    } catch {
+      // no crítico
+    }
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,6 +32,7 @@ export function AuthProvider({ children }) {
       .then(res => {
         if (!res.data?.tenant_id) { limpiarSesion(); return; }
         setUsuario(res.data);
+        cargarTenant();
       })
       .catch(() => limpiarSesion())
       .finally(() => setCargando(false));
@@ -31,6 +43,7 @@ export function AuthProvider({ children }) {
     const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', res.data.token);
     setUsuario(res.data.usuario);
+    cargarTenant();
     return res.data;
   }
 
@@ -49,7 +62,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ usuario, setUsuario, cargando, login, logout, refreshUsuario }}>
+    <AuthContext.Provider value={{ usuario, setUsuario, tenant, cargando, login, logout, refreshUsuario, cargarTenant }}>
       {children}
     </AuthContext.Provider>
   );

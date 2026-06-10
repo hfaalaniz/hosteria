@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// VITE_API_URL es build-time y siempre vacío en deploys dinámicos.
+// Fallback: si estamos en *.pages.dev (no es el proyecto base), apuntar al Worker directamente.
+function getBaseURL() {
+  if (import.meta.env.VITE_API_URL) return `${import.meta.env.VITE_API_URL}/api`;
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost') return '/api';
+  // Cualquier deploy en pages.dev apunta siempre al mismo Worker
+  return 'https://hosteria-api.soportetecnicoaf1.workers.dev/api';
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api',
+  baseURL: getBaseURL(),
 });
 
 api.interceptors.request.use((config) => {

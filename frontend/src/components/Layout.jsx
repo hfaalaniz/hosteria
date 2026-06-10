@@ -46,7 +46,7 @@ const ALL_NAV = [
 
 export default function Layout() {
   const { t, i18n } = useTranslation();
-  const { usuario, logout } = useAuth();
+  const { usuario, tenant, logout } = useAuth();
   const { tieneAcceso } = usePermisos();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -67,10 +67,12 @@ export default function Layout() {
   const Sidebar = () => (
     <aside className="flex flex-col h-full bg-slate-900 text-white">
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
-        <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
-        <div>
-          <div className="font-bold text-sm leading-tight">Sistema</div>
-          <div className="text-slate-400 text-xs">Hostería</div>
+        <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">
+          {(tenant?.nombre || 'H')[0].toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <div className="font-bold text-sm leading-tight truncate">{tenant?.nombre || 'Mi Hostería'}</div>
+          <div className="text-slate-400 text-xs capitalize">{tenant?.plan || 'trial'}</div>
         </div>
       </div>
 
@@ -149,7 +151,7 @@ export default function Layout() {
           <button onClick={() => setSidebarOpen(true)} className="text-slate-600">
             <Bars3Icon className="w-6 h-6" />
           </button>
-          <span className="font-bold text-slate-800">Hostería</span>
+          <span className="font-bold text-slate-800">{tenant?.nombre || 'Hostería'}</span>
         </div>
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">

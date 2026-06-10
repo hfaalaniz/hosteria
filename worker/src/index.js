@@ -27,20 +27,22 @@ import { initDB } from './db/init.js';
 const app = new Hono();
 
 app.use('*', async (c, next) => {
-  const allowedOrigins = [
-    c.env.FRONTEND_URL,
-    c.env.WEB_URL,
-    'http://localhost:3000',
-    'http://localhost:4001',
-  ].filter(Boolean);
-
   const origin = c.req.header('Origin') || '';
-  const allowed = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
+  // Permitir cualquier subdominio de pages.dev + localhost
+  const isAllowed =
+    origin.endsWith('.pages.dev') ||
+    origin === 'http://localhost:3000' ||
+    origin === 'http://localhost:4001' ||
+    origin === c.env.FRONTEND_URL ||
+    origin === c.env.WEB_URL;
+
+  const allowed = isAllowed ? origin : (c.env.FRONTEND_URL || '*');
 
   return cors({
     origin: allowed,
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Tenant-Slug'],
     credentials: true,
   })(c, next);
 });

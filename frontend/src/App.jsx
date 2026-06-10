@@ -27,6 +27,7 @@ import Usuarios from './pages/Usuarios';
 import Roles from './pages/Roles';
 import PartesLimpieza from './pages/PartesLimpieza';
 import PartesMantenimiento from './pages/PartesMantenimiento';
+import Demo from './pages/Demo';
 
 function ProtectedRoute({ children }) {
   const { usuario, cargando } = useAuth();
@@ -53,6 +54,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={usuario ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/registro" element={usuario ? <Navigate to="/" replace /> : <Registro />} />
+      <Route path="/demo" element={<Demo />} />
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
         <Route path="calendario"   element={<ModuloRoute modulo="calendario">  <Calendario />   </ModuloRoute>} />

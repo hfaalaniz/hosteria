@@ -16,7 +16,10 @@ database_id = "79cd435f-1c0e-4b95-8636-3ceb0e218268"
 [vars]
 FRONTEND_URL = "https://hosteria-admin.pages.dev"
 WEB_URL = "https://hosteria-web.pages.dev"
+CF_ACCOUNT_ID = "d4b139590ecac195d1d5c5310541c47c"
+WORKER_HOSTNAME = "hosteria-api.soportetecnicoaf1.workers.dev"
 
 # Secrets (set via: wrangler secret put JWT_SECRET)
 # JWT_SECRET
 # RESEND_API_KEY
+# CF_API_TOKEN  ← token de Cloudflare para crear proyectos Pages

@@ -5,11 +5,11 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 export default function Registro() {
-  const { setUsuario } = useAuth();
+  const { setUsuario, cargarTenant } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ nombre_hosteria: '', email: '', password: '', confirmar: '', nombre_admin: '' });
   const [cargando, setCargando] = useState(false);
-  const [aviso, setAviso] = useState('');
+  const [registro, setRegistro] = useState(null);
 
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
 
@@ -19,7 +19,7 @@ export default function Registro() {
     if (form.password.length < 6) { toast.error('La contraseña debe tener al menos 6 caracteres'); return; }
     setCargando(true);
     try {
-      const { data } = await api.post('/api/tenants/registro', {
+      const { data } = await api.post('/tenants/registro', {
         nombre_hosteria: form.nombre_hosteria,
         email: form.email,
         password: form.password,
@@ -27,7 +27,8 @@ export default function Registro() {
       });
       localStorage.setItem('token', data.token);
       setUsuario(data.usuario);
-      setAviso(data.aviso);
+      cargarTenant();
+      setRegistro(data);
       toast.success('¡Cuenta creada exitosamente!');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Error al crear la cuenta');
@@ -35,13 +36,31 @@ export default function Registro() {
     }
   }
 
-  if (aviso) {
+  if (registro) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-amber-900 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
           <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center text-white text-3xl mx-auto mb-4">✓</div>
           <h2 className="text-xl font-bold text-slate-800 mb-4">¡Tu sistema está listo!</h2>
-          <p className="text-slate-600 text-sm mb-6 text-left whitespace-pre-line">{aviso}</p>
+          <div className="space-y-3 mb-6 text-left">
+            <div className="bg-slate-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Panel de administración</p>
+              <a href={registro.admin_url} target="_blank" rel="noreferrer"
+                className="text-amber-600 font-medium text-sm hover:underline break-all">
+                {registro.admin_url}
+              </a>
+            </div>
+            {registro.web_url && (
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Sitio web público</p>
+                <a href={registro.web_url} target="_blank" rel="noreferrer"
+                  className="text-amber-600 font-medium text-sm hover:underline break-all">
+                  {registro.web_url}
+                </a>
+              </div>
+            )}
+            <p className="text-xs text-slate-500 text-center pt-1">Los sitios estarán listos en unos minutos una vez que hagas el deploy.</p>
+          </div>
           <button
             onClick={() => navigate('/')}
             className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg transition-colors"

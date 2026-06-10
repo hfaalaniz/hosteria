@@ -9,7 +9,9 @@ export async function authMiddleware(c, next) {
     if (!ok) return c.json({ error: 'Token inválido' }, 401);
     // decode payload
     const [, payload] = token.split('.');
-    c.set('user', JSON.parse(atob(payload)));
+    const user = JSON.parse(atob(payload));
+    if (!user.tenant_id) return c.json({ error: 'Token inválido' }, 401);
+    c.set('user', user);
     return next();
   } catch {
     return c.json({ error: 'Token inválido' }, 401);
