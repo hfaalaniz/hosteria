@@ -1,0 +1,42 @@
+🔴 Crítico
+1. Token de Cloudflare API publicado en GitHub. deploy-nuevo-tenant.ps1:7 tiene hardcodeado el token cfoat_S6ho... como valor por defecto, y verifiqué que ese archivo está commiteado y pusheado a github.com/hfaalaniz/hosteria, que es un repo público. Cualquiera puede tomar ese token y crear/borrar proyectos Pages en tu cuenta. Acción inmediata: revocá ese token en el dashboard de Cloudflare y generá uno nuevo (pasalo por parámetro o variable de entorno). Borrarlo del archivo no alcanza: queda en el historial de git.
+
+2. El precio de la reserva web lo decide el cliente. reservas_web.js:60-67 acepta precio_noche y senia directamente del body, y el sitio público los pasa incluso por la URL (?precio_noche=, Reservar.jsx:389-390). Cualquiera puede reservar a $0. Los descuentos por noches también se calculan solo en el cliente (descuentos.js). El server debería recalcular el precio desde tipos_habitacion/precio_override + descuentos de la config.
+
+3. Doble reserva con Booking/Airbnb. Los feeds iCal sincronizan a reservas_externas (ical_feeds.js:42), pero esa tabla no se consulta en ningún chequeo de disponibilidad: ni /api/web/disponibilidad, ni /api/web/reservar, ni habitaciones/disponibles, ni el POST/extender de reservas. Una habitación bloqueada por Booking aparece como disponible y se puede reservar encima.
+
+🟠 Alto
+4. Decodificación JWT con atob rompe tokens válidos. auth.js:12 decodifica el payload con atob() (base64 estándar), pero JWT usa base64url. Si el payload contiene - o _ (típico cuando el nombre del usuario tiene acentos o ñ), atob lanza y el usuario recibe "Token inválido" de forma intermitente. Fix: atob(payload.replace(/-/g,'+').replace(/_/g,'/')) o usar el decode de la misma librería.
+
+5. Token de registro sin expiración. tenants.js:114 firma el JWT sin exp (el login sí pone 24 h en auth.js:19). El token emitido al registrarse es válido para siempre.
+
+6. Editar una reserva permite solaparla con otra. PUT /api/reservas/:id (reservas.js:123-132) cambia fechas sin chequear conflictos (el POST sí lo hace), no valida noches > 0 ni que precio_noche sea numérico — campos faltantes producen NaN en precio_total.
+
+7. Inconsistencia de esquema: UNIQUE global vs. por tenant. Si la DB se migró con schema.sql + las dos migraciones, reservas.codigo y facturas.numero siguen siendo UNIQUE globales (schema.sql:63, schema.sql:113) — la migración fix_unique solo arregló habitaciones y permisos. Pero el código chequea unicidad por tenant, y las facturas se numeran FAC-YYYYMM-0001 por tenant (facturas.js:6-9): dos tenants facturando el mismo mes colisionan seguro → error 500. schema_final.sql sí lo tiene bien; hay 4 archivos .sql sin un orden de aplicación documentado.
+
+8. Emails de usuario duplicables entre tenants. El login busca por email global sin tenant (auth.js:12) y el POST de usuarios chequea email global, pero el PUT /usuarios/:id chequea solo dentro del tenant (usuarios.js:31). Editando un usuario se puede crear un email duplicado entre tenants, y el login con first() devuelve uno arbitrario.
+
+🟡 Medio
+9. CORS inválido/permisivo. index.js:40-46: el fallback puede ser '*' combinado con credentials: true (combinación prohibida por spec), y se permite cualquier origen *.pages.dev, incluyendo sitios de terceros.
+
+10. URLs prometidas ≠ proyectos deployados con slugs largos. tenants.js:116-118 arma web-${slug truncado a 28} (hasta 32 chars), pero pages_deploy.js:15 trunca el nombre completo del proyecto a 28. Para slugs > 24 chars la URL que se le muestra al usuario no existe. Peor: la web pública deduce el slug del subdominio (web axios.js:30-40); si el nombre quedó truncado, el slug extraído no matchea la DB → "Tenant no encontrado". Los preview deployments (hash.proyecto.pages.dev) también extraen el hash como slug.
+
+11. Registro y demo sin protección anti-abuso. POST /api/tenants/registro es público, crea tenant + seeds + dispara deploys de Pages sin rate limit ni captcha, y Demo.jsx lo automatiza con un click. Vector fácil de spam de tenants y de consumir tu cuota de Pages (límite de proyectos por cuenta).
+
+12. Registro sin atomicidad. En tenants.js:105-112, si seedTenant falla, quedan tenant y usuario creados a medias sin rollback.
+
+13. smtp_habilitado se ignora. email.js:31-35 lo trae de la config pero nunca lo chequea: los emails salen igual aunque esté en 0.
+
+14. /api/web/reservar no valida fechas. A diferencia de /disponibilidad, no chequea noches > 0: con fecha_salida <= fecha_entrada se inserta una reserva de 0 o noches negativas con total 0/negativo.
+
+15. Llamada con firma incorrecta. tenants.js:121 llama crearYDeployarPages(c.env, slug, nombre_hosteria) pero la función acepta solo (env, slug) — el tercer argumento se descarta silenciosamente.
+
+16. El deploy automático de Pages copia solo lo que está en index.html. pages_deploy.js:38-56 extrae assets del HTML; las imágenes referenciadas desde JS (/imgs/*.png de los tipos de habitación) no se copian → los tenants nuevos quedan sin imágenes.
+
+🔵 Menor
+Slug: .replace(/^-|-$/, '') en tenants.js:101 no tiene flag g: solo borra un guion (el inicial o el final, no ambos).
+Env vars inútiles: VITE_API_URL/VITE_TENANT_SLUG se setean como env vars de Pages (pages_deploy.js:76-80 y el .ps1), pero las variables VITE_* son de build-time — el propio comentario de frontend axios.js:3 lo reconoce. Es código muerto que confunde.
+Rutas "solo admin" sin guard en el frontend: /usuarios y /roles (App.jsx:75-77) no verifican rol; un no-admin navega ahí y ve la página con errores 403 (el backend sí protege).
+Numeración de facturas por COUNT: facturas.js:43-52 usa COUNT(*)+1; dos facturas simultáneas generan el mismo número (race).
+Defaults inconsistentes: la web busca con adultos=2 por defecto pero el insert guarda adultos||1.
+Lo más urgente, en orden: rotar el token de Cloudflare hoy (1), recalcular precios en el server (2), e incluir reservas_externas en los chequeos de disponibilidad (3). Si querés, aplico los fixes — decime por cuáles empiezo.

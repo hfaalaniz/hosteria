@@ -98,27 +98,46 @@ tenants.post('/registro', async c => {
   const emailExiste = await c.env.DB.prepare('SELECT id FROM usuarios WHERE email=?').bind(email).first();
   if (emailExiste) return c.json({ error: 'Ya existe una cuenta con ese email' }, 400);
 
-  let slug = nombre_hosteria.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/, '').substring(0, 40);
+  // Máx 24 chars: el proyecto Pages de la web es "web-{slug}" y Pages limita el nombre a 28.
+  // Así el subdominio deployado siempre coincide con el slug guardado en la DB.
+  let slug = nombre_hosteria.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 24).replace(/-+$/, '');
   const slugExiste = await c.env.DB.prepare('SELECT id FROM tenants WHERE slug=?').bind(slug).first();
-  if (slugExiste) slug = slug + '-' + Date.now().toString(36);
+  if (slugExiste) {
+    const sufijo = Date.now().toString(36);
+    slug = slug.substring(0, 24 - sufijo.length - 1).replace(/-+$/, '') + '-' + sufijo;
+  }
 
   const { meta: tenantMeta } = await c.env.DB.prepare('INSERT INTO tenants (nombre,slug,plan) VALUES (?,?,?)').bind(nombre_hosteria, slug, 'trial').run();
   const tenantId = tenantMeta.last_row_id;
 
-  const hash = await bcrypt.hash(password, 10);
-  const { meta: userMeta } = await c.env.DB.prepare('INSERT INTO usuarios (tenant_id,nombre,email,password,rol) VALUES (?,?,?,?,?)').bind(tenantId, nombre_admin || 'Administrador', email, hash, 'admin').run();
-  const userId = userMeta.last_row_id;
+  let userId;
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const { meta: userMeta } = await c.env.DB.prepare('INSERT INTO usuarios (tenant_id,nombre,email,password,rol) VALUES (?,?,?,?,?)').bind(tenantId, nombre_admin || 'Administrador', email, hash, 'admin').run();
+    userId = userMeta.last_row_id;
 
-  await seedTenant(c.env.DB, tenantId);
+    await seedTenant(c.env.DB, tenantId);
+  } catch (err) {
+    // Rollback compensatorio: no dejar tenant/usuario/seed a medias si algo falla
+    await c.env.DB.batch([
+      c.env.DB.prepare('DELETE FROM habitaciones WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM tipos_habitacion WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM servicios WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM permisos_rol WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM configuracion_mt WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM usuarios WHERE tenant_id=?').bind(tenantId),
+      c.env.DB.prepare('DELETE FROM tenants WHERE id=?').bind(tenantId),
+    ]);
+    return c.json({ error: 'No se pudo crear la cuenta, intentá de nuevo' }, 500);
+  }
 
-  const token = await sign({ id: userId, nombre: nombre_admin || 'Administrador', email, rol: 'admin', tenant_id: tenantId }, c.env.JWT_SECRET);
+  const token = await sign({ id: userId, nombre: nombre_admin || 'Administrador', email, rol: 'admin', tenant_id: tenantId, exp: Math.floor(Date.now() / 1000) + 86400 }, c.env.JWT_SECRET);
 
-  const slugClean = slug.replace(/[^a-z0-9-]/g, '-').substring(0, 28);
-  const adminUrl = `https://${slugClean}.pages.dev`;
-  const webUrl = `https://web-${slugClean}.pages.dev`;
+  const adminUrl = `https://${slug}.pages.dev`;
+  const webUrl = `https://web-${slug}.pages.dev`;
   if (c.env.CF_API_TOKEN && c.env.CF_ACCOUNT_ID) {
     c.executionCtx.waitUntil(
-      crearYDeployarPages(c.env, slug, nombre_hosteria).catch(e => console.error('Pages deploy error:', e.message))
+      crearYDeployarPages(c.env, slug).catch(e => console.error('Pages deploy error:', e.message))
     );
   }
 

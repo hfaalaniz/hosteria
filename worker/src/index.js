@@ -37,7 +37,8 @@ app.use('*', async (c, next) => {
     origin === c.env.FRONTEND_URL ||
     origin === c.env.WEB_URL;
 
-  const allowed = isAllowed ? origin : (c.env.FRONTEND_URL || '*');
+  // Nunca '*' con credentials:true (inválido por spec): fallback a un origen concreto
+  const allowed = isAllowed ? origin : (c.env.FRONTEND_URL || 'https://hosteria-admin.pages.dev');
 
   return cors({
     origin: allowed,

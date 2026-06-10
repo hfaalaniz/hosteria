@@ -10,6 +10,39 @@ async function getTenantId(c) {
   return t?.id ?? null;
 }
 
+// Debe coincidir con FERIADOS_FIJOS de web/src/components/CalendarioReserva.jsx
+const FERIADOS_FIJOS = new Set([
+  '01-01','02-24','02-25','03-24','04-02','04-18','04-19',
+  '05-01','05-25','06-20','07-09','08-17','10-12','11-20',
+  '12-08','12-25',
+]);
+
+function rangoTieneEspecial(fecha_entrada, fecha_salida) {
+  const d = new Date(fecha_entrada + 'T00:00:00');
+  const fin = new Date(fecha_salida + 'T00:00:00');
+  while (d < fin) {
+    const dia = d.getDay();
+    const mmdd = d.toISOString().slice(5, 10);
+    if (dia === 0 || dia === 6 || FERIADOS_FIJOS.has(mmdd)) return true;
+    d.setDate(d.getDate() + 1);
+  }
+  return false;
+}
+
+// Precio autoritativo del lado del servidor: tarifa base/finde + descuento por noches.
+// El precio que manda el cliente se ignora.
+async function calcularPrecioNoche(db, tenant_id, hab, fecha_entrada, fecha_salida, noches) {
+  let base;
+  if (hab.precio_override != null) base = hab.precio_override;
+  else base = rangoTieneEspecial(fecha_entrada, fecha_salida) && hab.precio_fin_semana ? hab.precio_fin_semana : hab.precio_base;
+
+  const cfg = await db.prepare("SELECT valor FROM configuracion_mt WHERE tenant_id=? AND clave='descuentos_noches'").bind(tenant_id).first();
+  let descuentos = [];
+  try { descuentos = JSON.parse(cfg?.valor || '[]'); } catch { descuentos = []; }
+  const d = [...descuentos].sort((a, b) => b.desde - a.desde).find(d => noches >= d.desde);
+  return d ? Math.round(base * (1 - d.pct / 100) * 100) / 100 : base;
+}
+
 reservasWeb.get('/config', async c => {
   const tenant_id = await getTenantId(c);
   if (!tenant_id) return c.json({ error: 'Tenant no encontrado' }, 404);
@@ -57,15 +90,24 @@ reservasWeb.get('/disponibilidad', async c => {
 reservasWeb.post('/reservar', async c => {
   const tenant_id = await getTenantId(c);
   if (!tenant_id) return c.json({ error: 'Tenant no encontrado' }, 404);
-  const { habitacion_id, fecha_entrada, fecha_salida, adultos, ninos, precio_noche, huesped, senia } = await c.req.json();
+  const { habitacion_id, fecha_entrada, fecha_salida, adultos, ninos, huesped } = await c.req.json();
   if (!habitacion_id || !fecha_entrada || !fecha_salida || !huesped?.nombre || !huesped?.apellido || !huesped?.email) return c.json({ error: 'Datos incompletos' }, 400);
 
-  const conflicto = await c.env.DB.prepare(`SELECT id FROM reservas WHERE habitacion_id=? AND tenant_id=? AND estado NOT IN ('cancelada','checkout','noshow') AND fecha_entrada<? AND fecha_salida>?`).bind(habitacion_id, tenant_id, fecha_salida, fecha_entrada).first();
-  if (conflicto) return c.json({ error: 'La habitación ya no está disponible para esas fechas' }, 400);
-
   const noches = Math.round((new Date(fecha_salida) - new Date(fecha_entrada)) / 86400000);
-  const precio_total = precio_noche * noches;
-  const seniaVal = senia != null ? Number(senia) : Math.round(precio_total * 0.10 * 100) / 100;
+  if (!Number.isFinite(noches) || noches <= 0) return c.json({ error: 'Fechas inválidas' }, 400);
+
+  const hab = await c.env.DB.prepare('SELECT h.id,h.precio_override,t.precio_base,t.precio_fin_semana FROM habitaciones h JOIN tipos_habitacion t ON h.tipo_id=t.id WHERE h.id=? AND h.tenant_id=?').bind(habitacion_id, tenant_id).first();
+  if (!hab) return c.json({ error: 'Habitación no encontrada' }, 404);
+
+  const [conflicto, conflictoExterno] = await Promise.all([
+    c.env.DB.prepare(`SELECT id FROM reservas WHERE habitacion_id=? AND tenant_id=? AND estado NOT IN ('cancelada','checkout','noshow') AND fecha_entrada<? AND fecha_salida>?`).bind(habitacion_id, tenant_id, fecha_salida, fecha_entrada).first(),
+    c.env.DB.prepare(`SELECT id FROM reservas_externas WHERE habitacion_id=? AND tenant_id=? AND fecha_entrada<? AND fecha_salida>?`).bind(habitacion_id, tenant_id, fecha_salida, fecha_entrada).first(),
+  ]);
+  if (conflicto || conflictoExterno) return c.json({ error: 'La habitación ya no está disponible para esas fechas' }, 400);
+
+  const precioNoche = await calcularPrecioNoche(c.env.DB, tenant_id, hab, fecha_entrada, fecha_salida, noches);
+  const precio_total = Math.round(precioNoche * noches * 100) / 100;
+  const seniaVal = Math.round(precio_total * 0.10 * 100) / 100;
 
   let huespedId;
   const existe = await c.env.DB.prepare('SELECT id FROM huespedes WHERE email=? AND tenant_id=?').bind(huesped.email, tenant_id).first();

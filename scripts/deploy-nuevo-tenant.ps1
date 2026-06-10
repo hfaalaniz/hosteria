@@ -4,12 +4,18 @@
 
 param(
   [string]$Slug = "",
-  [string]$Token = "cfoat_S6hoN_DF1svwqbMoj4ieDXcPRBwlneqIPEmm12HzyCk.PlerGN0DROKQogp0cuSCuLImDWEZwNqc3GenKE2s884",
+  # Token NUNCA hardcodeado: pasalo con -Token o seteá CLOUDFLARE_API_TOKEN
+  [string]$Token = $env:CLOUDFLARE_API_TOKEN,
   [string]$AccountId = "d4b139590ecac195d1d5c5310541c47c",
   [string]$WorkerUrl = "https://hosteria-api.soportetecnicoaf1.workers.dev",
   [string]$AdminDistPath = "$PSScriptRoot\..\frontend\dist",
   [string]$WebDistPath = "$PSScriptRoot\..\web\dist"
 )
+
+if (-not $Token) {
+  Write-Host "✗ Falta el API token. Pasalo con -Token o seteá la variable de entorno CLOUDFLARE_API_TOKEN."
+  exit 1
+}
 
 $env:CLOUDFLARE_API_TOKEN = $Token
 $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }

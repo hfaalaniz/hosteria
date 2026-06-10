@@ -7,9 +7,10 @@ export async function authMiddleware(c, next) {
   try {
     const ok = await verify(token, c.env.JWT_SECRET);
     if (!ok) return c.json({ error: 'Token inválido' }, 401);
-    // decode payload
+    // decode payload — JWT usa base64url, atob espera base64 estándar
     const [, payload] = token.split('.');
-    const user = JSON.parse(atob(payload));
+    const b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const user = JSON.parse(atob(b64));
     if (!user.tenant_id) return c.json({ error: 'Token inválido' }, 401);
     c.set('user', user);
     return next();
